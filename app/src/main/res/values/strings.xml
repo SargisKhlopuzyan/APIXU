@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Apixu</string>
+    <string name="wind">Wind: %s</string>
+    <string name="direction">Direction: %s</string>
+</resources>
