@@ -6,9 +6,9 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
-    private final FavoriteAdapter adapter;
+    private final FavoriteWeatherAdapter adapter;
 
-    public SimpleItemTouchHelperCallback(FavoriteAdapter adapter) {
+    public SimpleItemTouchHelperCallback(FavoriteWeatherAdapter adapter) {
         this.adapter = adapter;
     }
 

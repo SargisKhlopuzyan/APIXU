@@ -3,10 +3,12 @@ package com.sargis.kh.apixu.adapters;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.sargis.kh.apixu.R;
+import com.sargis.kh.apixu.enums.StateMode;
 import com.sargis.kh.apixu.databinding.LayoutRecyclerViewItemFavoriteBinding;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
 import com.squareup.picasso.Picasso;
@@ -15,18 +17,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ItemViewHolder> implements ItemTouchHelperAdapter {
+public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeatherAdapter.ItemViewHolder> implements ItemTouchHelperAdapter {
 
     public interface ItemInteractionInterface {
         void onFavoriteItemDeleted(CurrentWeatherDataModel searchDataModel);
         void onFavoriteItemMoved(int fromPosition, int toPosition);
+        void onFavoriteItemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected);
     }
 
     private ItemInteractionInterface itemInteractionInterface;
 
     private List<CurrentWeatherDataModel> favoriteDataModels;
 
-    public FavoriteAdapter(ItemInteractionInterface itemInteractionInterface) {
+    private StateMode stateMode = StateMode.Normal;
+
+    public FavoriteWeatherAdapter(ItemInteractionInterface itemInteractionInterface) {
         this.itemInteractionInterface = itemInteractionInterface;
         favoriteDataModels = new ArrayList<>();
     }
@@ -43,12 +48,21 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ItemVi
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        holder.bindData(favoriteDataModels.get(position));
+        holder.bindData(favoriteDataModels.get(position), stateMode, itemInteractionInterface);
     }
 
     @Override
     public int getItemCount() {
         return favoriteDataModels.size();
+    }
+
+    public void setStateMode(StateMode stateMode) {
+        if (stateMode == StateMode.Delete || this.stateMode == StateMode.Delete) {
+            this.stateMode = stateMode;
+            notifyDataSetChanged();
+        } else {
+            this.stateMode = stateMode;
+        }
     }
 
     public void setData(List<CurrentWeatherDataModel> currentWeatherDataModels) {
@@ -91,18 +105,30 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ItemVi
             this.binding = binding;
         }
 
-        public void bindData(final CurrentWeatherDataModel currentWeatherDataModel) {
+        public void bindData(final CurrentWeatherDataModel currentWeatherDataModel, StateMode stateMode, ItemInteractionInterface itemInteractionInterface) {
             binding.setName(currentWeatherDataModel.location.name + ", " + currentWeatherDataModel.location.country);
             binding.setCondition(currentWeatherDataModel.current.condition.text);
             binding.setTemperature(currentWeatherDataModel.current.temp_c.toString());
             binding.setTemperatureType("ºC");
             binding.setWind(currentWeatherDataModel.current.wind_kph + " km/h");
             binding.setDirection(currentWeatherDataModel.current.wind_dir);
+            binding.setStateMode(stateMode);
+
+            switch (stateMode) {
+                case Delete:
+                    binding.checkBox.setOnCheckedChangeListener (null);
+                    binding.checkBox.setChecked (currentWeatherDataModel.isSelected);
+                    binding.checkBox.setOnCheckedChangeListener ((buttonView, isChecked) -> {
+                        currentWeatherDataModel.isSelected = isChecked;
+                        itemInteractionInterface.onFavoriteItemSelectedStateChanged(currentWeatherDataModel, getItemCount(), getAdapterPosition(), isChecked);
+                        Log.e("LOG_TAG", "setOnCheckedChangeListener: isChecked: " + isChecked);
+                    });
+                    break;
+            }
 
             Picasso.get().load("https://" +  currentWeatherDataModel.current.condition.icon)
                     .placeholder(R.drawable.partly_cloudy)
                     .into(binding.imageViewTemperature);
-//            binding.setOnItemClickListener(v -> searchItemSelectedInterface.onSearchItemClicked(searchDataModel));
         }
     }
 

@@ -10,6 +10,8 @@ public class CurrentWeatherDataModel implements Serializable {
 
     public Long orderIndex;
 
+    public boolean isSelected;
+
     @SerializedName("location")
     public Location location;
 

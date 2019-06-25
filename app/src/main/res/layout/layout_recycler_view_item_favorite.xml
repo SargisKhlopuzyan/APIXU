@@ -9,6 +9,10 @@
 
         <import type="android.widget.SearchView" />
 
+        <import type="android.widget.CompoundButton" />
+
+        <import type="com.sargis.kh.apixu.enums.StateMode" />
+
         <variable
             name="name"
             type="String" />
@@ -34,8 +38,16 @@
             type="String" />
 
         <variable
-            name="onSaveClick"
-            type="android.view.View.OnClickListener" />
+            name="isSelected"
+            type="boolean" />
+
+        <variable
+            name="stateMode"
+            type="com.sargis.kh.apixu.enums.StateMode" />
+
+        <variable
+            name="onCheckedChangeListener"
+            type="android.widget.CompoundButton.OnCheckedChangeListener" />
 
     </data>
 
@@ -43,7 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:padding="8dp">
+        android:paddingHorizontal="@dimen/main_screen_padding_horizontal"
+        android:paddingVertical="8dp">
 
         <TextView
             android:id="@+id/textViewName"
@@ -80,7 +93,7 @@
             android:gravity="center_vertical"
             android:text="@{temperature}"
             android:textSize="48sp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="4dp"
             app:layout_constraintTop_toTopOf="@+id/imageViewTemperature"
             app:layout_constraintBottom_toBottomOf="@+id/imageViewTemperature"
             app:layout_constraintStart_toEndOf="@+id/imageViewTemperature"
@@ -102,7 +115,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="@{@string/wind(wind)}"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="8dp"
             app:layout_constraintTop_toTopOf="@+id/imageViewTemperature"
             app:layout_constraintBottom_toTopOf="@+id/textViewDirection"
             app:layout_constraintStart_toEndOf="@+id/textViewTemperatureType"
@@ -118,6 +131,18 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewWind"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="Direction: E"/>
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{stateMode == StateMode.Delete ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewWind"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

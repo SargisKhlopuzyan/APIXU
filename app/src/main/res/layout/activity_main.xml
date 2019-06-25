@@ -6,11 +6,27 @@
 
     <data>
 
+        <import type="com.sargis.kh.apixu.enums.StateMode" />
+
+        <import type="com.sargis.kh.apixu.enums.SelectedState" />
+
         <import type="android.view.View" />
 
         <import type="android.widget.SearchView" />
 
         <import type="android.support.v4.widget.SwipeRefreshLayout" />
+
+        <variable
+            name="stateMode"
+            type="com.sargis.kh.apixu.enums.StateMode" />
+
+        <variable
+            name="selectedState"
+            type="SelectedState" />
+
+        <variable
+            name="selectedItemsCount"
+            type="int" />
 
         <variable
             name="isSearchEmpty"
@@ -29,7 +45,15 @@
             type="boolean" />
 
         <variable
-            name="onSaveClick"
+            name="onCloseEditModeClickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onDeleteClickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="onSelectAllClickListener"
             type="android.view.View.OnClickListener" />
 
         <variable
@@ -62,19 +86,132 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                android:paddingLeft="16dp"
                 android:contentInsetStart="0dp"
                 android:contentInsetLeft="0dp"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
-                <SearchView
-                    android:id="@+id/searchView"
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    bind:setOnQueryTextFocusChangeListener="@{onQueryTextFocusChangeListener}"
-                    bind:setOnQueryTextListener="@{onQueryTextListener}"/>
+                    android:layout_height="wrap_content">
+
+                    <SearchView
+                        android:id="@+id/searchView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginLeft="16dp"
+                        style="android.support.v7.widget.SearchView"
+                        android:visibility="@{stateMode == StateMode.Normal || stateMode == StateMode.Search ? View.VISIBLE : View.GONE}"
+                        bind:setOnQueryTextFocusChangeListener="@{onQueryTextFocusChangeListener}"
+                        bind:setOnQueryTextListener="@{onQueryTextListener}"
+                        tools:visibility="gone"/>
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/containerDeleteMode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="@{stateMode == StateMode.Delete ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:id="@+id/imageViewCloseDeleteMode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="24dp"
+                            android:layout_margin="4dp"
+                            android:lineSpacingMultiplier="1.10"
+                            android:textAllCaps="false"
+                            android:textSize="20sp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_icon_close_light"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:onClick="@{(v) -> onCloseEditModeClickListener.onClick(v)}"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/textViewSelected"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{selectedItemsCount == 0 ? @string/none_selected : @string/selected}"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/textViewSelectedCount"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintHorizontal_bias="0.5"/>
+
+                        <TextView
+                            android:id="@+id/textViewSelectedCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="0dp"
+                            android:minWidth="0dp"
+                            android:gravity="center"
+                            android:visibility="@{selectedItemsCount != 0 ? View.VISIBLE : View.GONE}"
+                            android:text="@{Integer.toString(selectedItemsCount)}"
+                            android:layout_marginLeft="8dp"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:background="@drawable/shape_white_rounded_rectangle"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textViewSelected"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            tools:visibility="visible"
+                            tools:text="1"/>
+
+                    </android.support.constraint.ConstraintLayout>
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/containerEditMode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="@{stateMode == StateMode.Edit ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/imageViewCloseEditMode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="24dp"
+                            android:layout_margin="4dp"
+                            android:lineSpacingMultiplier="1.10"
+                            android:textAllCaps="false"
+                            android:textSize="20sp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_icon_close_light"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:onClick="@{(v) -> onCloseEditModeClickListener.onClick(v)}"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/textViewEditModeTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/edit_mode"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintHorizontal_bias="0.5"/>
+
+                    </android.support.constraint.ConstraintLayout>
+
+                </android.support.constraint.ConstraintLayout>
 
             </android.support.v7.widget.Toolbar>
 
@@ -94,7 +231,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginVertical="8dp"
-                android:visibility="@{isSearchLoading || isFavoriteLoading? View.VISIBLE : View.GONE}"
+                android:visibility="@{isSearchLoading || isFavoriteLoading ? View.VISIBLE : View.GONE}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -105,6 +242,7 @@
             android:id="@+id/swipeRefreshLayout"
             android:layout_height="0dp"
             android:layout_width="match_parent"
+            android:enabled="@{stateMode == StateMode.Normal}"
             app:layout_constraintTop_toBottomOf="@+id/containerProgressBar"
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@android:color/white"
@@ -121,6 +259,67 @@
                 tools:listitem="@layout/layout_recycler_view_item_favorite"/>
 
         </android.support.v4.widget.SwipeRefreshLayout>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{stateMode == StateMode.Delete ? View.VISIBLE : View.GONE}"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/containerDeleteModeActions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_white_rounded_rectangle"
+                android:paddingHorizontal="36dp"
+                android:paddingVertical="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <Button
+                    android:id="@+id/buttonDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:minWidth="60dp"
+                    android:layout_marginEnd="36dp"
+                    android:state_selected="true"
+                    android:text="@string/delete_all"
+                    android:textSize="8sp"
+                    android:onClick="@{(v) -> onDeleteClickListener.onClick(v)}"
+                    android:enabled="@{selectedState != SelectedState.Unselected}"
+                    android:drawableTop="@drawable/selector_trash"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonSelectAll"/>
+
+                <Button
+                    android:id="@+id/buttonSelectAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:minWidth="60dp"
+                    android:state_selected="true"
+                    android:text="@{selectedState == SelectedState.AllSelected ? @string/deselect_all : @string/select_all}"
+                    android:textSize="8sp"
+                    android:onClick="@{(v) -> onSelectAllClickListener.onClick(v)}"
+                    android:drawableTop="@{selectedState == SelectedState.AllSelected ? @drawable/selector_check_all_selected : @drawable/selector_check}"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/buttonDelete"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewSearch"

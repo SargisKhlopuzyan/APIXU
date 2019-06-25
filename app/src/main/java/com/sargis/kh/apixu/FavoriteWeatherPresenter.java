@@ -6,6 +6,7 @@ import android.util.Log;
 import com.sargis.kh.apixu.database.WeatherDatabase;
 import com.sargis.kh.apixu.database.dao.ItemDAO;
 import com.sargis.kh.apixu.database.models.Item;
+import com.sargis.kh.apixu.enums.SelectedState;
 import com.sargis.kh.apixu.helpers.DataConverter;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
 import com.sargis.kh.apixu.models.search.SearchDataModel;
@@ -17,13 +18,15 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 
-public class WeatherPresenter implements WeatherContract.Presenter {
+public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
 
     private WeatherContract.View viewCallback;
 
     private WeatherDatabase database;
 
-    public WeatherPresenter(WeatherContract.View viewCallback) {
+    private int selectedItemsCount = 0;
+
+    public FavoriteWeatherPresenter(WeatherContract.View viewCallback) {
         this.viewCallback = viewCallback;
         database = Room.databaseBuilder(App.getAppContext(), WeatherDatabase.class, "WeatherDatabaseDb")
                 .allowMainThreadQueries()
@@ -31,28 +34,27 @@ public class WeatherPresenter implements WeatherContract.Presenter {
     }
 
     @Override
-    public void getFavoriteData(String name, Long orderIndex) {
+    public void getFavoriteData(SearchDataModel searchDataModel, Long orderIndex) {
 
         viewCallback.onFavoriteDataLoadingStarted();
+        String name = searchDataModel.name.replace(", " + searchDataModel.region + ", " + searchDataModel.country, "");
+
+        ItemDAO itemDAO = database.getItemDAO();
+        Item item = itemDAO.getItemByFullName(name, searchDataModel.region, searchDataModel.country);
+
+        if (item != null) {
+            viewCallback.onFavoriteDataLoadedWithError("");
+            return;
+        }
 
         Data.getCurrentWeatherData(new GetDataCallback<CurrentWeatherDataModel>() {
 
             @Override
             public void onSuccess(CurrentWeatherDataModel currentWeatherDataModel) {
-
-                ItemDAO itemDAO = database.getItemDAO();
-                Item item = itemDAO.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country);
-
-                if (item != null) {
-                    viewCallback.onFavoriteDataLoadedWithError("");
-                    return;
-                }
-
                 currentWeatherDataModel.orderIndex = orderIndex;
                 Long id = saveFavoriteDataInDatabase(currentWeatherDataModel);
                 Log.e("LOG_TAG", "id: " + id);
                 currentWeatherDataModel.id = id;
-
                 viewCallback.onFavoriteDataLoaded(currentWeatherDataModel);
             }
 
@@ -65,13 +67,11 @@ public class WeatherPresenter implements WeatherContract.Presenter {
             public void onFailure(Throwable failure) {
                 viewCallback.onFavoriteDataLoadedWithError(failure.getMessage());
             }
-        }, name);
+        }, searchDataModel.name);
     }
 
     @Override
     public void getSearchData(String text) {
-        viewCallback.setIsSearchMode(true);
-
         if (text.isEmpty())
             viewCallback.setIsSearchEmpty(true);
         else
@@ -166,6 +166,7 @@ public class WeatherPresenter implements WeatherContract.Presenter {
         Item oldItem = itemDAO.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country );
         if (oldItem == null) {
             //TODO
+            Log.e("LOG_TAG", "oldItem == null");
         }
         currentWeatherDataModel.id = oldItem.getId();
         currentWeatherDataModel.orderIndex = oldItem.getOrder_index();
@@ -192,5 +193,32 @@ public class WeatherPresenter implements WeatherContract.Presenter {
         ItemDAO itemDAO = database.getItemDAO();
         itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(fromPosition)));
         itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(toPosition)));
+    }
+
+    public void itemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected) {
+        selectedItemsCount = isSelected ? selectedItemsCount + 1 : selectedItemsCount - 1;
+        SelectedState selectedState = selectedItemsCount == 0 ? SelectedState.Unselected : (selectedItemsCount == itemsSize ? SelectedState.AllSelected : SelectedState.Selected);
+
+        viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
+    }
+
+    public void resetSelectedItems(List<CurrentWeatherDataModel> currentWeatherDataModels) {
+        selectedItemsCount = 0;
+        for (CurrentWeatherDataModel currentWeatherDataModel : currentWeatherDataModels) {
+            currentWeatherDataModel.isSelected = false;
+        }
+        viewCallback.setSelectedItemsCount(SelectedState.Unselected, selectedItemsCount);
+    }
+
+    public void setAllItemsSelectedState(List<CurrentWeatherDataModel> currentWeatherDataModels, SelectedState selectedState) {
+
+        for (CurrentWeatherDataModel currentWeatherDataModel : currentWeatherDataModels) {
+            currentWeatherDataModel.isSelected = selectedState == SelectedState.AllSelected;
+        }
+
+        selectedItemsCount = selectedState == SelectedState.AllSelected ? currentWeatherDataModels.size() : 0;
+        viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
+
+        viewCallback.updateView();
     }
 }
