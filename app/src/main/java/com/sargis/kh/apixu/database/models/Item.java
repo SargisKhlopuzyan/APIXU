@@ -11,9 +11,11 @@ public class Item {
     @NonNull
     private Long id;
 
-    private Long order_position;
+    private Long order_index;
 
     private String name;
+
+    private String region;
 
     private String country;
 
@@ -32,12 +34,16 @@ public class Item {
         return id;
     }
 
-    public Long getOrder_position() {
-        return order_position;
+    public Long getOrder_index() {
+        return order_index;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getRegion() {
+        return region;
     }
 
     public String getCountry() {
@@ -68,12 +74,16 @@ public class Item {
         this.id = id;
     }
 
-    public void setOrder_position(Long order_position) {
-        this.order_position = order_position;
+    public void setOrder_index(Long order_index) {
+        this.order_index = order_index;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public void setCountry(String country) {

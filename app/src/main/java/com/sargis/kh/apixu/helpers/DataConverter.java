@@ -22,10 +22,11 @@ public class DataConverter {
     public static CurrentWeatherDataModel convertItemToCurrentWeatherDataModel(Item item) {
         CurrentWeatherDataModel currentWeatherDataModel = new CurrentWeatherDataModel();
         currentWeatherDataModel.id = item.getId();
-        currentWeatherDataModel.orderPosition = item.getOrder_position();
+        currentWeatherDataModel.orderIndex = item.getOrder_index();
         currentWeatherDataModel.current = new Current();
         currentWeatherDataModel.location = new Location();
         currentWeatherDataModel.location.name = item.getName();
+        currentWeatherDataModel.location.region = item.getRegion();
         currentWeatherDataModel.location.country = item.getCountry();
         currentWeatherDataModel.current.condition = new Condition();
         currentWeatherDataModel.current.condition.text = item.getCondition_text();
@@ -36,12 +37,12 @@ public class DataConverter {
         return currentWeatherDataModel;
     }
 
-    //TODO
     public static Item convertCurrentWeatherDataModelToItem(CurrentWeatherDataModel currentWeatherDataModel) {
         Item item = new Item();
         item.setId(currentWeatherDataModel.id);
-        item.setOrder_position(currentWeatherDataModel.orderPosition);
+        item.setOrder_index(currentWeatherDataModel.orderIndex);
         item.setName(currentWeatherDataModel.location.name);
+        item.setRegion(currentWeatherDataModel.location.region);
         item.setCountry(currentWeatherDataModel.location.country);
         item.setCondition_text(currentWeatherDataModel.current.condition.text);
         item.setTemp_c(currentWeatherDataModel.current.temp_c);

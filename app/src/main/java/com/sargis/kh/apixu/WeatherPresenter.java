@@ -31,7 +31,7 @@ public class WeatherPresenter implements WeatherContract.Presenter {
     }
 
     @Override
-    public void getFavoriteData(String name, Long orderPosition) {
+    public void getFavoriteData(String name, Long orderIndex) {
 
         viewCallback.onFavoriteDataLoadingStarted();
 
@@ -41,17 +41,14 @@ public class WeatherPresenter implements WeatherContract.Presenter {
             public void onSuccess(CurrentWeatherDataModel currentWeatherDataModel) {
 
                 ItemDAO itemDAO = database.getItemDAO();
-                Item item = itemDAO.getItemByName(currentWeatherDataModel.location.name);
+                Item item = itemDAO.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country);
 
-                if (item == null) {
-                    Log.e("LOG_TAG", "item ====== null => currentWeatherDataModel.location.name: " + currentWeatherDataModel.location.name);
-                } else {
-                    Log.e("LOG_TAG", "item != null => currentWeatherDataModel.location.name: " + currentWeatherDataModel.location.name);
+                if (item != null) {
                     viewCallback.onFavoriteDataLoadedWithError("");
                     return;
                 }
 
-                currentWeatherDataModel.orderPosition = orderPosition;
+                currentWeatherDataModel.orderIndex = orderIndex;
                 Long id = saveFavoriteDataInDatabase(currentWeatherDataModel);
                 Log.e("LOG_TAG", "id: " + id);
                 currentWeatherDataModel.id = id;
@@ -119,15 +116,15 @@ public class WeatherPresenter implements WeatherContract.Presenter {
 
         if (!currentWeatherDataModels.isEmpty() && position < currentWeatherDataModels.size()) {
 
-            Log.e("LOG_TAG", "currentWeatherDataModels: " + currentWeatherDataModels.get(position).location.name);
+            String searchQuery = currentWeatherDataModels.get(position).location.name + ", "
+                    + currentWeatherDataModels.get(position).location.region + ", "
+                    + currentWeatherDataModels.get(position).location.country;
 
             Data.getCurrentWeatherData(new GetDataCallback<CurrentWeatherDataModel>() {
 
                 @Override
                 public void onSuccess(CurrentWeatherDataModel currentWeatherDataModel) {
-
                     updateFavoritesDataInDatabase(currentWeatherDataModel);
-//                    viewCallback.onFavoriteSavedDataUpdated(currentWeatherDataModel);
 
                     if (position == currentWeatherDataModels.size() - 1) {
                         viewCallback.onFavoriteSavedDataUpdatingFinished();
@@ -153,28 +150,28 @@ public class WeatherPresenter implements WeatherContract.Presenter {
                         updateFavoritesData(currentWeatherDataModels,position + 1);
                     }
                 }
-            }, currentWeatherDataModels.get(position).location.name);
+            }, searchQuery);
         }
     }
 
-    public void deleteFavoriteDataFromDatabase(String name) {
+    public void deleteFavoriteDataFromDatabase(Long id) {
         ItemDAO itemDAO = database.getItemDAO();
-        itemDAO.delete(name);
+        itemDAO.delete(id);
+
+
     }
 
     private void updateFavoritesDataInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
         ItemDAO itemDAO = database.getItemDAO();
-        Log.e("LOG_TAG", "updateFavoritesDataInDatabase: currentWeatherDataModel.location.name: " + currentWeatherDataModel.location.name);
-        Item oldItem = itemDAO.getItemByName(currentWeatherDataModel.location.name);
+        Item oldItem = itemDAO.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country );
         if (oldItem == null) {
-            Log.e("LOG_TAG", "updateFavoritesDataInDatabase: oldItem == null");
+            //TODO
         }
         currentWeatherDataModel.id = oldItem.getId();
-        currentWeatherDataModel.orderPosition = oldItem.getOrder_position();
+        currentWeatherDataModel.orderIndex = oldItem.getOrder_index();
         Item item = DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModel);
-        int isUpdate = itemDAO.update(item);
+        itemDAO.update(item);
 
-        Log.e("LOG_TAG", "id: " + currentWeatherDataModel.id + " ; isUpdate: " + isUpdate);
         viewCallback.onFavoriteSavedDataUpdated(currentWeatherDataModel);
     }
 
@@ -191,4 +188,9 @@ public class WeatherPresenter implements WeatherContract.Presenter {
         return itemDAO.insert(item);
     }
 
+    public void onFavoriteItemMoved(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition) {
+        ItemDAO itemDAO = database.getItemDAO();
+        itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(fromPosition)));
+        itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(toPosition)));
+    }
 }

@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.widget.SearchView;
 
 import com.sargis.kh.apixu.adapters.FavoriteAdapter;
@@ -106,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     @Override
     public void onFavoriteSavedDataLoadedFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
-        Log.e("LOG_TAG", "onFavoriteSavedDataLoadedFromDatabase");
         favoriteAdapter.setData(currentWeatherDataModels);
         binding.setIsFavoriteLoading(false);
     }
@@ -120,14 +118,12 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     @Override
     public void onFavoriteSavedDataUpdated(CurrentWeatherDataModel currentWeatherDataModel) {
-
-        //TODO -
-        Log.e("LOG_TAG", "onFavoriteSavedDataUpdated");
+        favoriteAdapter.updateDataAtPosition(currentWeatherDataModel, favoriteAdapter.getItemCount() - currentWeatherDataModel.orderIndex.intValue() - 1);
+        //TODO
     }
 
     @Override
     public void onFavoriteSavedDataUpdatingFinished() {
-        Log.e("LOG_TAG", "onFavoriteSavedDataUpdatingFinished");
         if (binding.swipeRefreshLayout.isRefreshing()) {
             binding.swipeRefreshLayout.setRefreshing(false);
         }
@@ -138,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
         if (binding.swipeRefreshLayout.isRefreshing()) {
             binding.swipeRefreshLayout.setRefreshing(false);
         }
-        Log.e("LOG_TAG", "onFavoriteSavedDataUpdatingFinishedWithError");
         //TODO - ERROR
     }
 
@@ -197,7 +192,13 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     @Override
     public void onFavoriteItemDeleted(CurrentWeatherDataModel currentWeatherDataModel) {
-        weatherPresenter.deleteFavoriteDataFromDatabase(currentWeatherDataModel.location.name);
+        //TODO
+        weatherPresenter.deleteFavoriteDataFromDatabase(currentWeatherDataModel.id);
+    }
+
+    @Override
+    public void onFavoriteItemMoved(int fromPosition, int toPosition) {
+        weatherPresenter.onFavoriteItemMoved(favoriteAdapter.getCurrentWeatherDataModels(), fromPosition, toPosition);
     }
 
 }

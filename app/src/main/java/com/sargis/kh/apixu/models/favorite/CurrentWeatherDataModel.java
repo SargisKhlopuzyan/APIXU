@@ -8,7 +8,7 @@ public class CurrentWeatherDataModel implements Serializable {
 
     public Long id;
 
-    public Long orderPosition;
+    public Long orderIndex;
 
     @SerializedName("location")
     public Location location;

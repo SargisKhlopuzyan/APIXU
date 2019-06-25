@@ -19,6 +19,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ItemVi
 
     public interface ItemInteractionInterface {
         void onFavoriteItemDeleted(CurrentWeatherDataModel searchDataModel);
+        void onFavoriteItemMoved(int fromPosition, int toPosition);
     }
 
     private ItemInteractionInterface itemInteractionInterface;
@@ -62,6 +63,13 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ItemVi
         if (currentWeatherDataModel != null) {
             this.favoriteDataModels.add(0, currentWeatherDataModel);
             notifyDataSetChanged();
+        }
+    }
+
+    public void updateDataAtPosition(CurrentWeatherDataModel currentWeatherDataModel, int position) {
+        if (currentWeatherDataModel != null) {
+            this.favoriteDataModels.set(position, currentWeatherDataModel);
+            notifyItemChanged(position);
         }
     }
 
@@ -116,7 +124,19 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ItemVi
                 Collections.swap(favoriteDataModels, i, i - 1);
             }
         }
+        swapItemsOrderIndexes(fromPosition, toPosition);
+
+        itemInteractionInterface.onFavoriteItemMoved(fromPosition, toPosition);
+
         notifyItemMoved(fromPosition, toPosition);
+
         return true;
     }
+
+    private void swapItemsOrderIndexes(int fromPosition, int toPosition) {
+        Long tempFromPosition = favoriteDataModels.get(fromPosition).orderIndex;
+        favoriteDataModels.get(fromPosition).orderIndex = favoriteDataModels.get(toPosition).orderIndex;
+        favoriteDataModels.get(toPosition).orderIndex = tempFromPosition;
+    }
+
 }
