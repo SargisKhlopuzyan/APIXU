@@ -210,7 +210,6 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
 
         selectedItemsCount = selectedState == SelectedState.AllSelected ? currentWeatherDataModels.size() : 0;
         viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
-
         viewCallback.updateView();
     }
 
@@ -218,18 +217,16 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
     public void deleteFavoriteDataFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel currentWeatherDataModel, int position) {
         ItemDAO itemDAO = database.getItemDAO();
         itemDAO.delete(currentWeatherDataModel.id);
-        --selectedItemsCount;
 
         SelectedState selectedState = selectedItemsCount == 0 ? SelectedState.Unselected : (selectedItemsCount == currentWeatherDataModels.size() ? SelectedState.AllSelected : SelectedState.Selected);
-
-        viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
 
         for (int i = 0; i < position; i++) {
             currentWeatherDataModels.get(i).orderIndex = currentWeatherDataModels.get(i+1).orderIndex;
             itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i)));
         }
 
-        viewCallback.onFavoriteItemRemoved(position);
+        viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
+        viewCallback.onFavoriteItemDeleted(position);
     }
 
     @Override
@@ -244,7 +241,6 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
                 itemDAO.delete(currentWeatherDataModels.get(i).id);
                 --selectedItemsCount;
                 SelectedState selectedState = selectedItemsCount == 0 ? SelectedState.Unselected : (selectedItemsCount == currentWeatherDataModels.size() ? SelectedState.AllSelected : SelectedState.Selected);
-                viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
 
                 if (i > 0 && i < currentWeatherDataModels.size()) {
                     currentWeatherDataModels.get(i-1).orderIndex = currentWeatherDataModels.get(i).orderIndex;
@@ -253,7 +249,8 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
                     }
                 }
 
-                viewCallback.onFavoriteItemRemoved(currentWeatherDataModels.indexOf(currentWeatherDataModels.get(i)));
+                viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
+                viewCallback.onFavoriteItemDeleted(currentWeatherDataModels.indexOf(currentWeatherDataModels.get(i)));
 
             } else if((i > 0 && i < currentWeatherDataModels.size())
                     && (currentWeatherDataModels.get(i-1).orderIndex != currentWeatherDataModels.get(i).orderIndex + 1)) {

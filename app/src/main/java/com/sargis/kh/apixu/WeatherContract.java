@@ -33,7 +33,7 @@ public interface WeatherContract {
 
         void updateView();
 
-        void onFavoriteItemRemoved(int position);
+        void onFavoriteItemDeleted(int position);
     }
 
     interface Presenter {
@@ -50,9 +50,6 @@ public interface WeatherContract {
 
         void getFavoriteSavedDataFromDatabase();
         void onFavoriteItemMoved(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition);
-
-//        void setOnCloseEditModeClickListener(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition);
-
     }
 
 }

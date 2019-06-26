@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     @Override
-    public void onFavoriteItemRemoved(int position) {
+    public void onFavoriteItemDeleted(int position) {
         favoriteWeatherAdapter.onItemRemoved(position);
 
         if (favoriteWeatherAdapter.getCurrentWeatherDataModels().isEmpty() && (getStateMode() == StateMode.Normal || getStateMode() == StateMode.Edit || getStateMode() == StateMode.Delete)) {
@@ -336,13 +336,8 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     @Override
-    public void onFavoriteItemDeleted(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedCurrentWeatherDataModel, int position) {
+    public void onFavoriteItemRemoved(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedCurrentWeatherDataModel, int position) {
         favoriteWeatherPresenter.deleteFavoriteDataFromDatabase(currentWeatherDataModels, deletedCurrentWeatherDataModel, position);
-
-        if (favoriteWeatherAdapter.getCurrentWeatherDataModels().isEmpty() && (getStateMode() == StateMode.Normal || getStateMode() == StateMode.Edit || getStateMode() == StateMode.Delete)) {
-            setStateMode(StateMode.Empty);
-            invalidateOptionsMenu();
-        }
     }
 
     @Override

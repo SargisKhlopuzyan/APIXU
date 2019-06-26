@@ -19,7 +19,7 @@ import java.util.List;
 public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeatherAdapter.ItemViewHolder> implements ItemTouchHelperAdapter {
 
     public interface ItemInteractionInterface {
-        void onFavoriteItemDeleted(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedDataModel, int position);
+        void onFavoriteItemRemoved(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedDataModel, int position);
         void onFavoriteItemMoved(int fromPosition, int toPosition);
         void onFavoriteItemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected);
     }
@@ -130,7 +130,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
 
     @Override
     public void onItemDismiss(int position) {
-        itemInteractionInterface.onFavoriteItemDeleted(favoriteDataModels, favoriteDataModels.get(position), position);
+        itemInteractionInterface.onFavoriteItemRemoved(favoriteDataModels, favoriteDataModels.get(position), position);
     }
 
     @Override
