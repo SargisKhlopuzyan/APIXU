@@ -4,7 +4,6 @@ import com.sargis.kh.apixu.enums.SelectedState;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
 import com.sargis.kh.apixu.models.search.SearchDataModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface WeatherContract {
@@ -24,7 +23,7 @@ public interface WeatherContract {
         void onFavoriteDataLoadedWithError(String errorMessage);
 
         void onSearchDataLoadingStarted();
-        void onSearchDataLoaded(ArrayList<SearchDataModel> searchDataModels);
+        void onSearchDataLoaded(List<SearchDataModel> searchDataModels);
         void onSearchDataLoadedWithError(String errorMessage);
 
         void setIsSearchEmpty(boolean isSearchEmpty);
@@ -33,6 +32,8 @@ public interface WeatherContract {
         void setSelectedItemsCount(SelectedState selectedState, int selectedItemsCount);
 
         void updateView();
+
+        void onFavoriteItemRemoved(int position);
     }
 
     interface Presenter {

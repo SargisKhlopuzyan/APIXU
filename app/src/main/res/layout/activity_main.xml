@@ -33,10 +33,6 @@
             type="boolean" />
 
         <variable
-            name="isSearchMode"
-            type="boolean" />
-
-        <variable
             name="isSearchLoading"
             type="boolean" />
 
@@ -104,8 +100,9 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginLeft="16dp"
+                        android:queryHint="@string/query_hint"
                         style="android.support.v7.widget.SearchView"
-                        android:visibility="@{stateMode == StateMode.Normal || stateMode == StateMode.Search ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{stateMode == StateMode.Normal || stateMode == StateMode.Empty || stateMode == StateMode.Search ? View.VISIBLE : View.GONE}"
                         bind:setOnQueryTextFocusChangeListener="@{onQueryTextFocusChangeListener}"
                         bind:setOnQueryTextListener="@{onQueryTextListener}"
                         tools:visibility="gone"/>
@@ -291,6 +288,7 @@
                     android:state_selected="true"
                     android:text="@string/delete_all"
                     android:textSize="8sp"
+                    android:textAllCaps="false"
                     android:onClick="@{(v) -> onDeleteClickListener.onClick(v)}"
                     android:enabled="@{selectedState != SelectedState.Unselected}"
                     android:drawableTop="@drawable/selector_trash"
@@ -309,6 +307,7 @@
                     android:state_selected="true"
                     android:text="@{selectedState == SelectedState.AllSelected ? @string/deselect_all : @string/select_all}"
                     android:textSize="8sp"
+                    android:textAllCaps="false"
                     android:onClick="@{(v) -> onSelectAllClickListener.onClick(v)}"
                     android:drawableTop="@{selectedState == SelectedState.AllSelected ? @drawable/selector_check_all_selected : @drawable/selector_check}"
                     android:background="@android:color/transparent"
@@ -330,8 +329,8 @@
             android:paddingHorizontal="24dp"
             android:clipToPadding="false"
             android:scrollbars="none"
-            android:background="@{isSearchMode &amp;&amp; isSearchEmpty ? @color/transparentWhite : @android:color/white}"
-            android:visibility="@{isSearchMode ? View.VISIBLE : View.GONE}"
+            android:background="@{stateMode == StateMode.Search &amp;&amp; isSearchEmpty ? @color/transparentWhite : @android:color/white}"
+            android:visibility="@{stateMode == StateMode.Search ? View.VISIBLE : View.GONE}"
             app:layout_constraintVertical_bias="0.0"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"

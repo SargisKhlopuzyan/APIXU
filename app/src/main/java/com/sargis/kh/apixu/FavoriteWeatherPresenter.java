@@ -154,20 +154,10 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         }
     }
 
-    public void deleteFavoriteDataFromDatabase(Long id) {
-        ItemDAO itemDAO = database.getItemDAO();
-        itemDAO.delete(id);
-
-
-    }
-
     private void updateFavoritesDataInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
         ItemDAO itemDAO = database.getItemDAO();
         Item oldItem = itemDAO.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country );
-        if (oldItem == null) {
-            //TODO
-            Log.e("LOG_TAG", "oldItem == null");
-        }
+
         currentWeatherDataModel.id = oldItem.getId();
         currentWeatherDataModel.orderIndex = oldItem.getOrder_index();
         Item item = DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModel);
@@ -220,5 +210,57 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
 
         viewCallback.updateView();
+    }
+
+    public void deleteFavoriteDataFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel currentWeatherDataModel, int position) {
+        ItemDAO itemDAO = database.getItemDAO();
+        itemDAO.delete(currentWeatherDataModel.id);
+        --selectedItemsCount;
+
+        SelectedState selectedState = selectedItemsCount == 0 ? SelectedState.Unselected : (selectedItemsCount == currentWeatherDataModels.size() ? SelectedState.AllSelected : SelectedState.Selected);
+
+        viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
+
+        for (int i = 0; i < position; i++) {
+            currentWeatherDataModels.get(i).orderIndex = currentWeatherDataModels.get(i+1).orderIndex;
+            itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i)));
+        }
+
+        viewCallback.onFavoriteItemRemoved(position);
+    }
+
+    public void deleteSelectedFavoriteDatesFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
+
+        ItemDAO itemDAO = database.getItemDAO();
+
+        for (int i = currentWeatherDataModels.size() - 1; i >= 0 && i < currentWeatherDataModels.size(); i--) {
+
+            if (currentWeatherDataModels.get(i).isSelected) {
+
+                itemDAO.delete(currentWeatherDataModels.get(i).id);
+                --selectedItemsCount;
+                SelectedState selectedState = selectedItemsCount == 0 ? SelectedState.Unselected : (selectedItemsCount == currentWeatherDataModels.size() ? SelectedState.AllSelected : SelectedState.Selected);
+                viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
+
+                if (i > 0 && i < currentWeatherDataModels.size()) {
+                    currentWeatherDataModels.get(i-1).orderIndex = currentWeatherDataModels.get(i).orderIndex;
+                    if (!currentWeatherDataModels.get(i-1).isSelected) {
+                        itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i-1)));
+                    }
+                }
+
+                viewCallback.onFavoriteItemRemoved(currentWeatherDataModels.indexOf(currentWeatherDataModels.get(i)));
+
+            } else if((i > 0 && i < currentWeatherDataModels.size())
+                    && (currentWeatherDataModels.get(i-1).orderIndex != currentWeatherDataModels.get(i).orderIndex + 1)) {
+
+                currentWeatherDataModels.get(i-1).orderIndex = currentWeatherDataModels.get(i).orderIndex + 1;
+
+                if (!currentWeatherDataModels.get(i-1).isSelected) {
+                    itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i-1)));
+                }
+            }
+        }
+
     }
 }

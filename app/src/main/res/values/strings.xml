@@ -8,4 +8,6 @@
     <string name="delete_all">Delete All</string>
     <string name="select_all">Select All</string>
     <string name="deselect_all">Deselect All</string>
+
+    <string name="query_hint">Pass US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude (decimal degree) or city name</string>
 </resources>

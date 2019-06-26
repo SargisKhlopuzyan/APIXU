@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.sargis.kh.apixu.R;
-import com.sargis.kh.apixu.enums.StateMode;
 import com.sargis.kh.apixu.databinding.LayoutRecyclerViewItemFavoriteBinding;
+import com.sargis.kh.apixu.enums.StateMode;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
 import com.squareup.picasso.Picasso;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeatherAdapter.ItemViewHolder> implements ItemTouchHelperAdapter {
 
     public interface ItemInteractionInterface {
-        void onFavoriteItemDeleted(CurrentWeatherDataModel searchDataModel);
+        void onFavoriteItemDeleted(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedDataModel, int position);
         void onFavoriteItemMoved(int fromPosition, int toPosition);
         void onFavoriteItemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected);
     }
@@ -80,6 +80,11 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
         }
     }
 
+    public void onItemRemoved(int position) {
+        favoriteDataModels.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public void updateDataAtPosition(CurrentWeatherDataModel currentWeatherDataModel, int position) {
         if (currentWeatherDataModel != null) {
             this.favoriteDataModels.set(position, currentWeatherDataModel);
@@ -89,11 +94,6 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
 
     public List<CurrentWeatherDataModel> getCurrentWeatherDataModels() {
         return favoriteDataModels;
-    }
-
-    public void clearData() {
-        this.favoriteDataModels.clear();
-        notifyDataSetChanged();
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -108,7 +108,10 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
         public void bindData(final CurrentWeatherDataModel currentWeatherDataModel, StateMode stateMode, ItemInteractionInterface itemInteractionInterface) {
             binding.setName(currentWeatherDataModel.location.name + ", " + currentWeatherDataModel.location.country);
             binding.setCondition(currentWeatherDataModel.current.condition.text);
-            binding.setTemperature(currentWeatherDataModel.current.temp_c.toString());
+            //TODO
+//            binding.setTemperature(currentWeatherDataModel.current.temp_c.toString());
+            binding.setTemperature(currentWeatherDataModel.orderIndex.toString());
+
             binding.setTemperatureType("ºC");
             binding.setWind(currentWeatherDataModel.current.wind_kph + " km/h");
             binding.setDirection(currentWeatherDataModel.current.wind_dir);
@@ -134,9 +137,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
 
     @Override
     public void onItemDismiss(int position) {
-        itemInteractionInterface.onFavoriteItemDeleted(favoriteDataModels.get(position));
-        favoriteDataModels.remove(position);
-        notifyItemRemoved(position);
+        itemInteractionInterface.onFavoriteItemDeleted(favoriteDataModels, favoriteDataModels.get(position), position);
     }
 
     @Override
