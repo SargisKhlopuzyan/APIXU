@@ -1,7 +1,6 @@
 package com.sargis.kh.apixu;
 
 import android.arch.persistence.room.Room;
-import android.util.Log;
 
 import com.sargis.kh.apixu.database.WeatherDatabase;
 import com.sargis.kh.apixu.database.dao.ItemDAO;
@@ -53,7 +52,6 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
             public void onSuccess(CurrentWeatherDataModel currentWeatherDataModel) {
                 currentWeatherDataModel.orderIndex = orderIndex;
                 Long id = saveFavoriteDataInDatabase(currentWeatherDataModel);
-                Log.e("LOG_TAG", "id: " + id);
                 currentWeatherDataModel.id = id;
                 viewCallback.onFavoriteDataLoaded(currentWeatherDataModel);
             }

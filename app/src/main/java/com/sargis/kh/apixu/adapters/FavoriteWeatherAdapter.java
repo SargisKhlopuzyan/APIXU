@@ -3,7 +3,6 @@ package com.sargis.kh.apixu.adapters;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -108,8 +107,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
         public void bindData(final CurrentWeatherDataModel currentWeatherDataModel, StateMode stateMode, ItemInteractionInterface itemInteractionInterface) {
             binding.setName(currentWeatherDataModel.location.name + ", " + currentWeatherDataModel.location.country);
             binding.setCondition(currentWeatherDataModel.current.condition.text);
-            //TODO
-//            binding.setTemperature(currentWeatherDataModel.current.temp_c.toString());
+            binding.setTemperature(currentWeatherDataModel.current.temp_c.toString());
             binding.setTemperature(currentWeatherDataModel.orderIndex.toString());
 
             binding.setTemperatureType("ºC");
@@ -117,16 +115,13 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
             binding.setDirection(currentWeatherDataModel.current.wind_dir);
             binding.setStateMode(stateMode);
 
-            switch (stateMode) {
-                case Delete:
-                    binding.checkBox.setOnCheckedChangeListener (null);
-                    binding.checkBox.setChecked (currentWeatherDataModel.isSelected);
-                    binding.checkBox.setOnCheckedChangeListener ((buttonView, isChecked) -> {
-                        currentWeatherDataModel.isSelected = isChecked;
-                        itemInteractionInterface.onFavoriteItemSelectedStateChanged(currentWeatherDataModel, getItemCount(), getAdapterPosition(), isChecked);
-                        Log.e("LOG_TAG", "setOnCheckedChangeListener: isChecked: " + isChecked);
-                    });
-                    break;
+            if (stateMode == StateMode.Delete) {
+                binding.checkBox.setOnCheckedChangeListener(null);
+                binding.checkBox.setChecked(currentWeatherDataModel.isSelected);
+                binding.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    currentWeatherDataModel.isSelected = isChecked;
+                    itemInteractionInterface.onFavoriteItemSelectedStateChanged(currentWeatherDataModel, getItemCount(), getAdapterPosition(), isChecked);
+                });
             }
 
             Picasso.get().load("https://" +  currentWeatherDataModel.current.condition.icon)
