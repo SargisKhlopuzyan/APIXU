@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
         setRecyclerViewAnimationState();
 
-        switch (binding.getStateMode()) {
+        switch (getStateMode()) {
             case Normal:
                 menu.findItem(R.id.edit).setVisible(true);
                 menu.findItem(R.id.delete).setVisible(true);
@@ -94,8 +94,17 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
         return super.onOptionsItemSelected(item);
     }
 
+    private StateMode getStateMode() {
+        return binding.getStateMode();
+    }
+
     private void setStateMode(StateMode stateMode) {
         binding.setStateMode(stateMode);
+        favoriteWeatherAdapter.setStateMode(stateMode);
+    }
+
+    private SelectedState getSelectedState() {
+        return binding.getSelectedState();
     }
 
     private void setSelectedState(SelectedState selectedState) {
@@ -122,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     private void setRecyclerViewAnimationState() {
-        StateMode stateMode = binding.getStateMode();
+        StateMode stateMode = getStateMode();
         if (stateMode == null) {
             setStateMode(StateMode.Normal);
             stateMode = StateMode.Normal;
@@ -143,8 +152,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     private void setupData(){
         setStateMode(StateMode.Empty);
-        setSelectedState(SelectedState.Unselected);
-        binding.setSelectedItemsCount(0);
+        setSelectedItemsCount(SelectedState.Unselected, 0);
         favoriteWeatherPresenter.getFavoriteSavedDataFromDatabase();
     }
 
@@ -182,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
         binding.setOnCloseEditModeClickListener(v -> {
 
-            if (binding.getStateMode() == StateMode.Delete) {
+            if (getStateMode() == StateMode.Delete) {
                 favoriteWeatherPresenter.resetSelectedItems(favoriteWeatherAdapter.getCurrentWeatherDataModels());
             }
 
@@ -192,19 +200,18 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
         });
 
         binding.setOnSelectAllClickListener(v -> {
-            setSelectedState(binding.getSelectedState() == SelectedState.AllSelected ? SelectedState.Unselected : SelectedState.AllSelected);
-            favoriteWeatherPresenter.setAllItemsStateSelected(favoriteWeatherAdapter.getCurrentWeatherDataModels(), binding.getSelectedState());
+            setSelectedState(getSelectedState() == SelectedState.AllSelected ? SelectedState.Unselected : SelectedState.AllSelected);
+            favoriteWeatherPresenter.setAllItemsStateSelected(favoriteWeatherAdapter.getCurrentWeatherDataModels(), getSelectedState());
         });
 
-        binding.setOnDeleteClickListener(v -> favoriteWeatherPresenter.deleteSelectedFavoriteDatesFromDatabase(favoriteWeatherAdapter.getCurrentWeatherDataModels()));
+        binding.setOnDeleteClickListener(v -> favoriteWeatherPresenter.deleteAllSelectedFavoriteDatesFromDatabase(favoriteWeatherAdapter.getCurrentWeatherDataModels()));
     }
 
     @Override
     public void onSearchItemClicked(SearchDataModel searchDataModel) {
         StateMode stateMode = favoriteWeatherAdapter.getCurrentWeatherDataModels().isEmpty() ? StateMode.Empty : StateMode.Normal;
-        if (binding.getStateMode() != stateMode)
-            binding.setStateMode(stateMode);
-
+        if (getStateMode() != stateMode)
+            setStateMode(stateMode);
         favoriteWeatherPresenter.getFavoriteData(searchDataModel, Long.valueOf(favoriteWeatherAdapter.getItemCount()));
     }
 
@@ -216,11 +223,11 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     @Override
     public void onFavoriteSavedDataLoadedFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
 
-        if (currentWeatherDataModels.isEmpty() && binding.getStateMode() == StateMode.Normal) {
-            binding.setStateMode(StateMode.Empty);
+        if (currentWeatherDataModels.isEmpty() && getStateMode() == StateMode.Normal) {
+            setStateMode(StateMode.Empty);
             invalidateOptionsMenu();
-        } else if (!currentWeatherDataModels.isEmpty() && binding.getStateMode() == StateMode.Empty) {
-            binding.setStateMode(StateMode.Normal);
+        } else if (!currentWeatherDataModels.isEmpty() && getStateMode() == StateMode.Empty) {
+            setStateMode(StateMode.Normal);
             invalidateOptionsMenu();
         }
 
@@ -256,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     @Override
     public void onFavoriteDataLoadingStarted() {
-        searchAdapter.clearData();
+        stopSearchLoadingAndCleanData();
         binding.searchView.setQuery("", false);
         binding.searchView.clearFocus();
         binding.setIsFavoriteLoading(true);
@@ -265,8 +272,8 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     @Override
     public void onFavoriteDataLoaded(CurrentWeatherDataModel currentWeatherDataModel) {
 
-        if (binding.getStateMode() == StateMode.Empty) {
-            binding.setStateMode(StateMode.Normal);
+        if (getStateMode() == StateMode.Empty) {
+            setStateMode(StateMode.Normal);
             invalidateOptionsMenu();
         }
 
@@ -322,8 +329,8 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     public void onFavoriteItemRemoved(int position) {
         favoriteWeatherAdapter.onItemRemoved(position);
 
-        if (favoriteWeatherAdapter.getCurrentWeatherDataModels().isEmpty() && binding.getStateMode() != StateMode.Search) {
-            binding.setStateMode(StateMode.Empty);
+        if (favoriteWeatherAdapter.getCurrentWeatherDataModels().isEmpty() && (getStateMode() == StateMode.Normal || getStateMode() == StateMode.Edit || getStateMode() == StateMode.Delete)) {
+            setStateMode(StateMode.Empty);
             invalidateOptionsMenu();
         }
     }
@@ -332,17 +339,10 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     public void onFavoriteItemDeleted(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedCurrentWeatherDataModel, int position) {
         favoriteWeatherPresenter.deleteFavoriteDataFromDatabase(currentWeatherDataModels, deletedCurrentWeatherDataModel, position);
 
-        if (currentWeatherDataModels.isEmpty() && binding.getStateMode() == StateMode.Normal) {
-            binding.setStateMode(StateMode.Empty);
-            invalidateOptionsMenu();
-        } else if (!currentWeatherDataModels.isEmpty() && binding.getStateMode() == StateMode.Empty) {
-            binding.setStateMode(StateMode.Normal);
-            invalidateOptionsMenu();
-        } else if (currentWeatherDataModels.isEmpty()) {
-            binding.setStateMode(StateMode.Empty);
+        if (favoriteWeatherAdapter.getCurrentWeatherDataModels().isEmpty() && (getStateMode() == StateMode.Normal || getStateMode() == StateMode.Edit || getStateMode() == StateMode.Delete)) {
+            setStateMode(StateMode.Empty);
             invalidateOptionsMenu();
         }
-
     }
 
     @Override

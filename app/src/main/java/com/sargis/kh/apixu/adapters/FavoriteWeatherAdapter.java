@@ -56,7 +56,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
     }
 
     public void setStateMode(StateMode stateMode) {
-        if (stateMode == StateMode.Delete || this.stateMode == StateMode.Delete) {
+        if ((stateMode != this.stateMode) && (stateMode == StateMode.Delete || this.stateMode == StateMode.Delete)) {
             this.stateMode = stateMode;
             notifyDataSetChanged();
         } else {

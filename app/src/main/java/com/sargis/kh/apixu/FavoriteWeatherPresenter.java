@@ -233,7 +233,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
     }
 
     @Override
-    public void deleteSelectedFavoriteDatesFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
+    public void deleteAllSelectedFavoriteDatesFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
 
         ItemDAO itemDAO = database.getItemDAO();
 

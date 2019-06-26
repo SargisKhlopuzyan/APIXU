@@ -42,7 +42,7 @@ public interface WeatherContract {
         void updateFavoritesData(List<CurrentWeatherDataModel> currentWeatherDataModels);
 
         void deleteFavoriteDataFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel currentWeatherDataModel, int position);
-        void deleteSelectedFavoriteDatesFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels);
+        void deleteAllSelectedFavoriteDatesFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels);
 
         void setAllItemsStateSelected(List<CurrentWeatherDataModel> currentWeatherDataModels, SelectedState selectedState);
         void resetSelectedItems(List<CurrentWeatherDataModel> currentWeatherDataModels);
@@ -50,6 +50,8 @@ public interface WeatherContract {
 
         void getFavoriteSavedDataFromDatabase();
         void onFavoriteItemMoved(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition);
+
+//        void setOnCloseEditModeClickListener(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition);
 
     }
 
