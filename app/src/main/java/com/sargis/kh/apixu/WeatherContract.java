@@ -40,6 +40,17 @@ public interface WeatherContract {
         void getSearchData(String text);
         void getFavoriteData(SearchDataModel searchDataModel, Long orderPosition);
         void updateFavoritesData(List<CurrentWeatherDataModel> currentWeatherDataModels);
+
+        void deleteFavoriteDataFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel currentWeatherDataModel, int position);
+        void deleteSelectedFavoriteDatesFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels);
+
+        void setAllItemsStateSelected(List<CurrentWeatherDataModel> currentWeatherDataModels, SelectedState selectedState);
+        void resetSelectedItems(List<CurrentWeatherDataModel> currentWeatherDataModels);
+        void itemSelectedStateChanged(int itemsSize, Boolean isSelected);
+
+        void getFavoriteSavedDataFromDatabase();
+        void onFavoriteItemMoved(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition);
+
     }
 
 }

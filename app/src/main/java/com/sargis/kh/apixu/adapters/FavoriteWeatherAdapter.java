@@ -108,8 +108,6 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
             binding.setName(currentWeatherDataModel.location.name + ", " + currentWeatherDataModel.location.country);
             binding.setCondition(currentWeatherDataModel.current.condition.text);
             binding.setTemperature(currentWeatherDataModel.current.temp_c.toString());
-            binding.setTemperature(currentWeatherDataModel.orderIndex.toString());
-
             binding.setTemperatureType("ºC");
             binding.setWind(currentWeatherDataModel.current.wind_kph + " km/h");
             binding.setDirection(currentWeatherDataModel.current.wind_dir);

@@ -23,7 +23,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
 
     private WeatherDatabase database;
 
-    private int selectedItemsCount = 0;
+    private int selectedItemsCount;
 
     public FavoriteWeatherPresenter(WeatherContract.View viewCallback) {
         this.viewCallback = viewCallback;
@@ -34,7 +34,6 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
 
     @Override
     public void getFavoriteData(SearchDataModel searchDataModel, Long orderIndex) {
-
         viewCallback.onFavoriteDataLoadingStarted();
         String name = searchDataModel.name.replace(", " + searchDataModel.region + ", " + searchDataModel.country, "");
 
@@ -164,6 +163,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         viewCallback.onFavoriteSavedDataUpdated(currentWeatherDataModel);
     }
 
+    @Override
     public void getFavoriteSavedDataFromDatabase() {
         viewCallback.onFavoriteSavedDataLoadingFromDatabaseStarted();
         ItemDAO itemDAO = database.getItemDAO();
@@ -171,25 +171,28 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         viewCallback.onFavoriteSavedDataLoadedFromDatabase(DataConverter.convertItemsToCurrentWeatherDataModels(items));
     }
 
-    public Long saveFavoriteDataInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
+    private Long saveFavoriteDataInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
         ItemDAO itemDAO = database.getItemDAO();
         Item item = DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModel);
         return itemDAO.insert(item);
     }
 
+    @Override
     public void onFavoriteItemMoved(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition) {
         ItemDAO itemDAO = database.getItemDAO();
         itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(fromPosition)));
         itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(toPosition)));
     }
 
-    public void itemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected) {
+    @Override
+    public void itemSelectedStateChanged(int itemsSize, Boolean isSelected) {
         selectedItemsCount = isSelected ? selectedItemsCount + 1 : selectedItemsCount - 1;
         SelectedState selectedState = selectedItemsCount == 0 ? SelectedState.Unselected : (selectedItemsCount == itemsSize ? SelectedState.AllSelected : SelectedState.Selected);
 
         viewCallback.setSelectedItemsCount(selectedState, selectedItemsCount);
     }
 
+    @Override
     public void resetSelectedItems(List<CurrentWeatherDataModel> currentWeatherDataModels) {
         selectedItemsCount = 0;
         for (CurrentWeatherDataModel currentWeatherDataModel : currentWeatherDataModels) {
@@ -198,7 +201,8 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         viewCallback.setSelectedItemsCount(SelectedState.Unselected, selectedItemsCount);
     }
 
-    public void setAllItemsSelectedState(List<CurrentWeatherDataModel> currentWeatherDataModels, SelectedState selectedState) {
+    @Override
+    public void setAllItemsStateSelected(List<CurrentWeatherDataModel> currentWeatherDataModels, SelectedState selectedState) {
 
         for (CurrentWeatherDataModel currentWeatherDataModel : currentWeatherDataModels) {
             currentWeatherDataModel.isSelected = selectedState == SelectedState.AllSelected;
@@ -210,6 +214,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         viewCallback.updateView();
     }
 
+    @Override
     public void deleteFavoriteDataFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel currentWeatherDataModel, int position) {
         ItemDAO itemDAO = database.getItemDAO();
         itemDAO.delete(currentWeatherDataModel.id);
@@ -227,6 +232,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         viewCallback.onFavoriteItemRemoved(position);
     }
 
+    @Override
     public void deleteSelectedFavoriteDatesFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
 
         ItemDAO itemDAO = database.getItemDAO();

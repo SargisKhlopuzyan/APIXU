@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     private SearchAdapter searchAdapter;
     private FavoriteWeatherAdapter favoriteWeatherAdapter;
 
-    private FavoriteWeatherPresenter favoriteWeatherPresenter;
+    private WeatherContract.Presenter favoriteWeatherPresenter;
 
     private ItemTouchHelper touchHelper;
 
@@ -193,12 +193,10 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
         binding.setOnSelectAllClickListener(v -> {
             setSelectedState(binding.getSelectedState() == SelectedState.AllSelected ? SelectedState.Unselected : SelectedState.AllSelected);
-            favoriteWeatherPresenter.setAllItemsSelectedState(favoriteWeatherAdapter.getCurrentWeatherDataModels(), binding.getSelectedState());
+            favoriteWeatherPresenter.setAllItemsStateSelected(favoriteWeatherAdapter.getCurrentWeatherDataModels(), binding.getSelectedState());
         });
 
-        binding.setOnDeleteClickListener(v -> {
-            favoriteWeatherPresenter.deleteSelectedFavoriteDatesFromDatabase(favoriteWeatherAdapter.getCurrentWeatherDataModels());
-        });
+        binding.setOnDeleteClickListener(v -> favoriteWeatherPresenter.deleteSelectedFavoriteDatesFromDatabase(favoriteWeatherAdapter.getCurrentWeatherDataModels()));
     }
 
     @Override
@@ -354,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     @Override
     public void onFavoriteItemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected) {
-        favoriteWeatherPresenter.itemSelectedStateChanged(currentWeatherDataModel, itemsSize, position, isSelected);
+        favoriteWeatherPresenter.itemSelectedStateChanged(itemsSize, isSelected);
     }
 
     @Override
