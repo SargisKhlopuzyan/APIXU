@@ -10,6 +10,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 
 import com.sargis.kh.apixu.adapters.FavoriteWeatherAdapter;
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        int options = binding.searchView.getImeOptions();
+        binding.searchView.setImeOptions(options|EditorInfo.IME_FLAG_NO_EXTRACT_UI|EditorInfo.IME_FLAG_NO_FULLSCREEN);
         return true;
     }
 
