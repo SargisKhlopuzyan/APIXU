@@ -185,6 +185,11 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
     }
 
     @Override
+    public int getSelectedItemsCount() {
+        return selectedItemsCount;
+    }
+
+    @Override
     public void itemSelectedStateChanged(int itemsSize, Boolean isSelected) {
         selectedItemsCount = isSelected ? selectedItemsCount + 1 : selectedItemsCount - 1;
         SelectedState selectedState = selectedItemsCount == 0 ? SelectedState.Unselected : (selectedItemsCount == itemsSize ? SelectedState.AllSelected : SelectedState.Selected);

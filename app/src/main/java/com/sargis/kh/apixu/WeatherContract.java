@@ -50,6 +50,8 @@ public interface WeatherContract {
 
         void getFavoriteSavedDataFromDatabase();
         void onFavoriteItemMoved(List<CurrentWeatherDataModel> currentWeatherDataModels, int fromPosition, int toPosition);
+
+        int getSelectedItemsCount();
     }
 
 }

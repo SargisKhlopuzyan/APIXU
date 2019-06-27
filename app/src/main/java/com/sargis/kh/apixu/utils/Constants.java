@@ -13,4 +13,10 @@ public interface Constants {
         String API_KEY = "65c8401892bc4738b3d104240192006";
     }
 
+    interface BundleConstants {
+        String STATE_MODE = "STATE_MODE";
+        String SELECTED_STATE = "SELECTED_STATE";
+        String SELECTED_ITEMS_COUNT = "SELECTED_ITEMS_COUNT";
+    }
+
 }

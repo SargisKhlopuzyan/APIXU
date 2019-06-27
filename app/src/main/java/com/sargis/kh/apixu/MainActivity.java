@@ -18,8 +18,10 @@ import com.sargis.kh.apixu.adapters.SimpleItemTouchHelperCallback;
 import com.sargis.kh.apixu.databinding.ActivityMainBinding;
 import com.sargis.kh.apixu.enums.SelectedState;
 import com.sargis.kh.apixu.enums.StateMode;
+import com.sargis.kh.apixu.helpers.EnumHelper;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
 import com.sargis.kh.apixu.models.search.SearchDataModel;
+import com.sargis.kh.apixu.utils.Constants;
 
 import java.util.List;
 
@@ -41,10 +43,34 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
         favoriteWeatherPresenter = new FavoriteWeatherPresenter(this);
 
+        setSupportActionBar(binding.toolbar);
+
         setupRecyclerViewSearch();
         setupRecyclerViewFavorite();
+
+        if (savedInstanceState == null) {
+            setStateMode(StateMode.Normal);
+            setSelectedState(SelectedState.Unselected);
+            setSelectedItemsCount(SelectedState.Unselected, 0);
+        } else {
+            setStateMode(EnumHelper.getStateMode(savedInstanceState.getInt(Constants.BundleConstants.STATE_MODE)));
+            setSelectedState(EnumHelper.getSelectedState(savedInstanceState.getInt(Constants.BundleConstants.SELECTED_STATE)));
+            setSelectedItemsCount(getSelectedState(), savedInstanceState.getInt(Constants.BundleConstants.SELECTED_ITEMS_COUNT));
+
+            if (getStateMode() == StateMode.Search) {
+                binding.searchView.setIconified(true);
+                binding.searchView.clearFocus();
+                binding.searchView.onActionViewCollapsed();
+                favoriteWeatherPresenter.getSearchData(binding.searchView.getQuery().toString());
+            } else if (getStateMode() == StateMode.Empty) {
+                binding.searchView.setIconified(true);
+                binding.searchView.clearFocus();
+                binding.searchView.onActionViewCollapsed();
+            }
+        }
+
         setupData();
-        setSupportActionBar(binding.toolbar);
+
         setListeners();
     }
 
@@ -92,6 +118,14 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(Constants.BundleConstants.STATE_MODE, getStateMode().getIndex());
+        outState.putInt(Constants.BundleConstants.SELECTED_STATE, getSelectedState().getIndex());
+        outState.putInt(Constants.BundleConstants.SELECTED_ITEMS_COUNT, favoriteWeatherPresenter.getSelectedItemsCount());
+        super.onSaveInstanceState(outState);
     }
 
     private StateMode getStateMode() {
@@ -151,8 +185,6 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     private void setupData(){
-        setStateMode(StateMode.Empty);
-        setSelectedItemsCount(SelectedState.Unselected, 0);
         favoriteWeatherPresenter.getFavoriteSavedDataFromDatabase();
     }
 
@@ -163,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
             @Override
             public boolean onQueryTextSubmit(String query) {
+                binding.searchView.clearFocus();
                 return false;
             }
 
@@ -178,8 +211,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
             invalidateOptionsMenu();
 
             if (hasFocus) {
-                setStateMode(StateMode.Search);
-                binding.setIsSearchEmpty(String.valueOf(((SearchView)v).getQuery()).isEmpty());
+                setStateMode(String.valueOf(((SearchView)v).getQuery()).isEmpty() ? StateMode.Empty : StateMode.Search);
             } else if (String.valueOf(((SearchView)v).getQuery()).isEmpty()){
                 setStateMode(favoriteWeatherAdapter.getCurrentWeatherDataModels().isEmpty() ? StateMode.Empty : StateMode.Normal);
                 binding.searchView.setIconified(true);
@@ -222,15 +254,6 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     @Override
     public void onFavoriteSavedDataLoadedFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
-
-        if (currentWeatherDataModels.isEmpty() && getStateMode() == StateMode.Normal) {
-            setStateMode(StateMode.Empty);
-            invalidateOptionsMenu();
-        } else if (!currentWeatherDataModels.isEmpty() && getStateMode() == StateMode.Empty) {
-            setStateMode(StateMode.Normal);
-            invalidateOptionsMenu();
-        }
-
         favoriteWeatherAdapter.setData(currentWeatherDataModels);
         binding.setIsFavoriteLoading(false);
     }
@@ -305,7 +328,8 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
     @Override
     public void setIsSearchEmpty(boolean isSearchEmpty) {
-        binding.setIsSearchEmpty(isSearchEmpty);
+        if (getStateMode() == StateMode.Empty || getStateMode() == StateMode.Search)
+            setStateMode(isSearchEmpty ? StateMode.Empty : StateMode.Search);
     }
 
     @Override
