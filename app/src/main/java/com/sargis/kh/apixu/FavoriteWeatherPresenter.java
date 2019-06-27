@@ -7,6 +7,7 @@ import com.sargis.kh.apixu.database.dao.ItemDAO;
 import com.sargis.kh.apixu.database.models.Item;
 import com.sargis.kh.apixu.enums.SelectedState;
 import com.sargis.kh.apixu.helpers.DataConverter;
+import com.sargis.kh.apixu.helpers.NetworkHelper;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
 import com.sargis.kh.apixu.models.search.SearchDataModel;
 import com.sargis.kh.apixu.network.calls.Data;
@@ -41,7 +42,12 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         Item item = itemDAO.getItemByFullName(name, searchDataModel.region, searchDataModel.country);
 
         if (item != null) {
-            viewCallback.onFavoriteDataLoadedWithError("");
+            viewCallback.onFavoriteDataLoaded();
+            return;
+        }
+
+        if (!NetworkHelper.isNetworkActive()) {
+            viewCallback.onFavoriteDataLoadedWithError(App.getAppContext().getString(R.string.no_internet_connection));
             return;
         }
 
@@ -80,6 +86,11 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         }
 
         viewCallback.onSearchDataLoadingStarted();
+
+        if (!NetworkHelper.isNetworkActive()) {
+            viewCallback.onSearchDataLoadedWithError(App.getAppContext().getString(R.string.no_internet_connection));
+            return;
+        }
 
         Data.getSearchData(new GetDataCallback<ArrayList<SearchDataModel>>() {
             @Override

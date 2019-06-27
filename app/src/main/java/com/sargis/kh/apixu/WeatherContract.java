@@ -20,6 +20,7 @@ public interface WeatherContract {
 
         void onFavoriteDataLoadingStarted();
         void onFavoriteDataLoaded(CurrentWeatherDataModel currentWeatherDataModel);
+        void onFavoriteDataLoaded();
         void onFavoriteDataLoadedWithError(String errorMessage);
 
         void onSearchDataLoadingStarted();

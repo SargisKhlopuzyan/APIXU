@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                hideErrorMessage();
                 favoriteWeatherPresenter.getSearchData(newText);
                 return false;
             }
@@ -305,24 +306,34 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     @Override
+    public void onFavoriteDataLoaded() {
+        binding.setIsFavoriteLoading(false);
+        hideErrorMessage();
+    }
+
+    @Override
     public void onFavoriteDataLoadedWithError(String errorMessage) {
         binding.setIsFavoriteLoading(false);
+        showErrorMessage(errorMessage);
     }
 
     @Override
     public void onSearchDataLoadingStarted() {
+        hideErrorMessage();
         binding.setIsSearchLoading(true);
         searchAdapter.clearData();
     }
 
     @Override
     public void onSearchDataLoaded(List<SearchDataModel> searchDataModels) {
+        hideErrorMessage();
         binding.setIsSearchLoading(false);
         searchAdapter.updateData(searchDataModels);
     }
 
     @Override
     public void onSearchDataLoadedWithError(String errorMessage) {
+        showErrorMessage(errorMessage);
         binding.setIsSearchLoading(false);
     }
 
@@ -372,6 +383,16 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     @Override
     public void onFavoriteItemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected) {
         favoriteWeatherPresenter.itemSelectedStateChanged(itemsSize, isSelected);
+    }
+
+    private void showErrorMessage(String errorMessage) {
+        binding.setIsErrorVisible(true);
+        binding.setErrorMessage(errorMessage);
+    }
+
+    private void hideErrorMessage() {
+        binding.setIsErrorVisible(false);
+        binding.setErrorMessage("");
     }
 
     @Override
