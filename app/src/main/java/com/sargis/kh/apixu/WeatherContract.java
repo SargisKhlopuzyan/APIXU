@@ -10,18 +10,18 @@ public interface WeatherContract {
 
     interface View {
 
-        void onFavoriteSavedDataLoadingFromDatabaseStarted();
-        void onFavoriteSavedDataLoadedFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels);
+        void onSavedFavoriteWeatherDataLoadingFromDatabaseStarted();
+        void onSavedFavoriteWeatherDataLoadedFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels);
 
-        void onFavoriteSavedDataUpdatingStarted();
-        void onFavoriteSavedDataUpdated(CurrentWeatherDataModel currentWeatherDataModel);
-        void onFavoriteSavedDataUpdatingFinished();
-        void onFavoriteSavedDataUpdatingFinishedWithError(String errorMessage);
+        void onSavedFavoriteWeatherDataUpdatingStarted();
+        void onSavedFavoriteWeatherDataUpdated(CurrentWeatherDataModel currentWeatherDataModel);
+        void onSavedFavoriteWeatherDataUpdatingFinished();
+        void onSavedFavoriteWeatherDataUpdatingFinishedWithError(String errorMessage);
 
-        void onFavoriteDataLoadingStarted();
-        void onFavoriteDataLoaded(CurrentWeatherDataModel currentWeatherDataModel);
-        void onFavoriteDataLoaded();
-        void onFavoriteDataLoadedWithError(String errorMessage);
+        void onFavoriteWeatherDataLoadingStarted();
+        void onFavoriteWeatherDataLoadedFromDatabase(CurrentWeatherDataModel currentWeatherDataModel);
+        void onFavoriteWeatherDataFoundInDatabase();
+        void onFavoriteWeatherDataLoadedWithError(String errorMessage);
 
         void onSearchDataLoadingStarted();
         void onSearchDataLoaded(List<SearchDataModel> searchDataModels);

@@ -17,6 +17,11 @@ public interface Constants {
         String STATE_MODE = "STATE_MODE";
         String SELECTED_STATE = "SELECTED_STATE";
         String SELECTED_ITEMS_COUNT = "SELECTED_ITEMS_COUNT";
+
+        String IS_ERROR_VISIBLE = "IS_ERROR_VISIBLE";
+        String ERROR_MESSAGE = "ERROR_MESSAGE";
+        String IS_SEARCH_MODE_LOADING = "IS_SEARCH_MODE_LOADING";
+        String IS_FAVORITE_LOADING = "IS_FAVORITE_LOADING";
     }
 
 }

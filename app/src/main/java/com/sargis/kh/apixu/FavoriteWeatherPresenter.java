@@ -35,19 +35,19 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
 
     @Override
     public void getFavoriteData(SearchDataModel searchDataModel, Long orderIndex) {
-        viewCallback.onFavoriteDataLoadingStarted();
+        viewCallback.onFavoriteWeatherDataLoadingStarted();
         String name = searchDataModel.name.replace(", " + searchDataModel.region + ", " + searchDataModel.country, "");
 
         ItemDAO itemDAO = database.getItemDAO();
         Item item = itemDAO.getItemByFullName(name, searchDataModel.region, searchDataModel.country);
 
         if (item != null) {
-            viewCallback.onFavoriteDataLoaded();
+            viewCallback.onFavoriteWeatherDataFoundInDatabase();
             return;
         }
 
         if (!NetworkHelper.isNetworkActive()) {
-            viewCallback.onFavoriteDataLoadedWithError(App.getAppContext().getString(R.string.no_internet_connection));
+            viewCallback.onFavoriteWeatherDataLoadedWithError(App.getAppContext().getString(R.string.no_internet_connection));
             return;
         }
 
@@ -58,17 +58,17 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
                 currentWeatherDataModel.orderIndex = orderIndex;
                 Long id = saveFavoriteDataInDatabase(currentWeatherDataModel);
                 currentWeatherDataModel.id = id;
-                viewCallback.onFavoriteDataLoaded(currentWeatherDataModel);
+                viewCallback.onFavoriteWeatherDataLoadedFromDatabase(currentWeatherDataModel);
             }
 
             @Override
             public void onError(int errorCode, ResponseBody errorResponse) {
-                viewCallback.onFavoriteDataLoadedWithError(errorResponse.toString());
+                viewCallback.onFavoriteWeatherDataLoadedWithError(errorResponse.toString());
             }
 
             @Override
             public void onFailure(Throwable failure) {
-                viewCallback.onFavoriteDataLoadedWithError(failure.getMessage());
+                viewCallback.onFavoriteWeatherDataLoadedWithError(failure.getMessage());
             }
         }, searchDataModel.name);
     }
@@ -113,10 +113,10 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
     @Override
     public void updateFavoritesData(List<CurrentWeatherDataModel> currentWeatherDataModels) {
         if (currentWeatherDataModels.isEmpty()){
-            viewCallback.onFavoriteSavedDataUpdatingFinished();
+            viewCallback.onSavedFavoriteWeatherDataUpdatingFinished();
             return;
         }
-        viewCallback.onFavoriteSavedDataUpdatingStarted();
+        viewCallback.onSavedFavoriteWeatherDataUpdatingStarted();
         updateFavoritesData(currentWeatherDataModels, 0);
     }
 
@@ -135,7 +135,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
                     updateFavoritesDataInDatabase(currentWeatherDataModel);
 
                     if (position == currentWeatherDataModels.size() - 1) {
-                        viewCallback.onFavoriteSavedDataUpdatingFinished();
+                        viewCallback.onSavedFavoriteWeatherDataUpdatingFinished();
                     } else {
                         updateFavoritesData(currentWeatherDataModels,position + 1);
                     }
@@ -144,7 +144,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
                 @Override
                 public void onError(int errorCode, ResponseBody errorResponse) {
                     if (position == currentWeatherDataModels.size() - 1) {
-                        viewCallback.onFavoriteSavedDataUpdatingFinishedWithError(errorResponse.toString());
+                        viewCallback.onSavedFavoriteWeatherDataUpdatingFinishedWithError(errorResponse.toString());
                     } else {
                         updateFavoritesData(currentWeatherDataModels,position + 1);
                     }
@@ -153,7 +153,7 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
                 @Override
                 public void onFailure(Throwable failure) {
                     if (position == currentWeatherDataModels.size() - 1) {
-                        viewCallback.onFavoriteSavedDataUpdatingFinishedWithError(failure.getMessage());
+                        viewCallback.onSavedFavoriteWeatherDataUpdatingFinishedWithError(failure.getMessage());
                     } else {
                         updateFavoritesData(currentWeatherDataModels,position + 1);
                     }
@@ -171,15 +171,15 @@ public class FavoriteWeatherPresenter implements WeatherContract.Presenter {
         Item item = DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModel);
         itemDAO.update(item);
 
-        viewCallback.onFavoriteSavedDataUpdated(currentWeatherDataModel);
+        viewCallback.onSavedFavoriteWeatherDataUpdated(currentWeatherDataModel);
     }
 
     @Override
     public void getFavoriteSavedDataFromDatabase() {
-        viewCallback.onFavoriteSavedDataLoadingFromDatabaseStarted();
+        viewCallback.onSavedFavoriteWeatherDataLoadingFromDatabaseStarted();
         ItemDAO itemDAO = database.getItemDAO();
         List<Item> items = itemDAO.getItems();
-        viewCallback.onFavoriteSavedDataLoadedFromDatabase(DataConverter.convertItemsToCurrentWeatherDataModels(items));
+        viewCallback.onSavedFavoriteWeatherDataLoadedFromDatabase(DataConverter.convertItemsToCurrentWeatherDataModels(items));
     }
 
     private Long saveFavoriteDataInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {

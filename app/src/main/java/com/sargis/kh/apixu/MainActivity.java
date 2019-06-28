@@ -58,15 +58,30 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
             setSelectedState(EnumHelper.getSelectedState(savedInstanceState.getInt(Constants.BundleConstants.SELECTED_STATE)));
             setSelectedItemsCount(getSelectedState(), savedInstanceState.getInt(Constants.BundleConstants.SELECTED_ITEMS_COUNT));
 
-            if (getStateMode() == StateMode.Search) {
-                binding.searchView.setIconified(true);
-                binding.searchView.clearFocus();
-                binding.searchView.onActionViewCollapsed();
-                favoriteWeatherPresenter.getSearchData(binding.searchView.getQuery().toString());
-            } else if (getStateMode() == StateMode.Empty) {
-                binding.searchView.setIconified(true);
-                binding.searchView.clearFocus();
-                binding.searchView.onActionViewCollapsed();
+            binding.setIsErrorVisible(savedInstanceState.getBoolean(Constants.BundleConstants.IS_ERROR_VISIBLE));
+            binding.setErrorMessage(savedInstanceState.getString(Constants.BundleConstants.ERROR_MESSAGE));
+            binding.setIsSearchLoading(savedInstanceState.getBoolean(Constants.BundleConstants.IS_SEARCH_MODE_LOADING));
+            binding.setIsFavoriteLoading(savedInstanceState.getBoolean(Constants.BundleConstants.IS_FAVORITE_LOADING));
+
+
+            switch (getStateMode()) {
+                case Normal:
+                    break;
+                case Empty:
+                    binding.searchView.setIconified(true);
+                    binding.searchView.clearFocus();
+                    binding.searchView.onActionViewCollapsed();
+                    break;
+                case Search:
+                    binding.searchView.setIconified(true);
+                    binding.searchView.clearFocus();
+                    binding.searchView.onActionViewCollapsed();
+                    favoriteWeatherPresenter.getSearchData(binding.searchView.getQuery().toString());
+                    break;
+                case Edit:
+                    break;
+                case Delete:
+                    break;
             }
         }
 
@@ -128,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
         outState.putInt(Constants.BundleConstants.STATE_MODE, getStateMode().getIndex());
         outState.putInt(Constants.BundleConstants.SELECTED_STATE, getSelectedState().getIndex());
         outState.putInt(Constants.BundleConstants.SELECTED_ITEMS_COUNT, favoriteWeatherPresenter.getSelectedItemsCount());
+        outState.putBoolean(Constants.BundleConstants.IS_ERROR_VISIBLE, binding.getIsErrorVisible());
+        outState.putString(Constants.BundleConstants.ERROR_MESSAGE, binding.getErrorMessage());
+        outState.putBoolean(Constants.BundleConstants.IS_SEARCH_MODE_LOADING, binding.getIsSearchLoading());
+        outState.putBoolean(Constants.BundleConstants.IS_FAVORITE_LOADING, binding.getIsSearchLoading());
         super.onSaveInstanceState(outState);
     }
 
@@ -252,44 +271,44 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     @Override
-    public void onFavoriteSavedDataLoadingFromDatabaseStarted() {
+    public void onSavedFavoriteWeatherDataLoadingFromDatabaseStarted() {
         binding.setIsFavoriteLoading(true);
     }
 
     @Override
-    public void onFavoriteSavedDataLoadedFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
+    public void onSavedFavoriteWeatherDataLoadedFromDatabase(List<CurrentWeatherDataModel> currentWeatherDataModels) {
         favoriteWeatherAdapter.setData(currentWeatherDataModels);
         binding.setIsFavoriteLoading(false);
     }
 
     @Override
-    public void onFavoriteSavedDataUpdatingStarted() {
+    public void onSavedFavoriteWeatherDataUpdatingStarted() {
         if (!binding.swipeRefreshLayout.isRefreshing()) {
             binding.swipeRefreshLayout.setRefreshing(true);
         }
     }
 
     @Override
-    public void onFavoriteSavedDataUpdated(CurrentWeatherDataModel currentWeatherDataModel) {
+    public void onSavedFavoriteWeatherDataUpdated(CurrentWeatherDataModel currentWeatherDataModel) {
         favoriteWeatherAdapter.updateDataAtPosition(currentWeatherDataModel, favoriteWeatherAdapter.getItemCount() - currentWeatherDataModel.orderIndex.intValue() - 1);
     }
 
     @Override
-    public void onFavoriteSavedDataUpdatingFinished() {
+    public void onSavedFavoriteWeatherDataUpdatingFinished() {
         if (binding.swipeRefreshLayout.isRefreshing()) {
             binding.swipeRefreshLayout.setRefreshing(false);
         }
     }
 
     @Override
-    public void onFavoriteSavedDataUpdatingFinishedWithError(String errorMessage) {
+    public void onSavedFavoriteWeatherDataUpdatingFinishedWithError(String errorMessage) {
         if (binding.swipeRefreshLayout.isRefreshing()) {
             binding.swipeRefreshLayout.setRefreshing(false);
         }
     }
 
     @Override
-    public void onFavoriteDataLoadingStarted() {
+    public void onFavoriteWeatherDataLoadingStarted() {
         stopSearchLoadingAndCleanData();
         binding.searchView.setQuery("", false);
         binding.searchView.clearFocus();
@@ -297,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     @Override
-    public void onFavoriteDataLoaded(CurrentWeatherDataModel currentWeatherDataModel) {
+    public void onFavoriteWeatherDataLoadedFromDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
 
         if (getStateMode() == StateMode.Empty) {
             setStateMode(StateMode.Normal);
@@ -309,13 +328,13 @@ public class MainActivity extends AppCompatActivity implements SearchAdapter.Sea
     }
 
     @Override
-    public void onFavoriteDataLoaded() {
+    public void onFavoriteWeatherDataFoundInDatabase() {
         binding.setIsFavoriteLoading(false);
         hideErrorMessage();
     }
 
     @Override
-    public void onFavoriteDataLoadedWithError(String errorMessage) {
+    public void onFavoriteWeatherDataLoadedWithError(String errorMessage) {
         binding.setIsFavoriteLoading(false);
         showErrorMessage(errorMessage);
     }
