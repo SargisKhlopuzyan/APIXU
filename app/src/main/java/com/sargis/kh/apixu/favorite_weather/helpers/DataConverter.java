@@ -1,10 +1,10 @@
-package com.sargis.kh.apixu.helpers;
+package com.sargis.kh.apixu.favorite_weather.helpers;
 
 import com.sargis.kh.apixu.favorite_weather.database.models.Item;
-import com.sargis.kh.apixu.models.favorite.Condition;
-import com.sargis.kh.apixu.models.favorite.Current;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
-import com.sargis.kh.apixu.models.favorite.Location;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.Condition;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.Current;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.Location;
 
 import java.util.ArrayList;
 import java.util.List;

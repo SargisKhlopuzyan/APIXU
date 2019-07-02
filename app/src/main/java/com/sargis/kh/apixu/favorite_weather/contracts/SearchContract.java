@@ -1,6 +1,6 @@
 package com.sargis.kh.apixu.favorite_weather.contracts;
 
-import com.sargis.kh.apixu.models.search.SearchDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
 
 import java.util.List;
 

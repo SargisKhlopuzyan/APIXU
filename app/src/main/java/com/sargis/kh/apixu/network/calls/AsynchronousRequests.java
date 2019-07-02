@@ -1,8 +1,8 @@
 package com.sargis.kh.apixu.network.calls;
 
 import com.sargis.kh.apixu.helpers.UrlHelper;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
-import com.sargis.kh.apixu.models.search.SearchDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
 import com.sargis.kh.apixu.network.APIService;
 import com.sargis.kh.apixu.network.RetrofitClientInstance;
 

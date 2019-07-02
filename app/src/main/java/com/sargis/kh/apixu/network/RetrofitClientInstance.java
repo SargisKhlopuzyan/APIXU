@@ -1,6 +1,6 @@
 package com.sargis.kh.apixu.network;
 
-import com.sargis.kh.apixu.utils.Constants;
+import com.sargis.kh.apixu.favorite_weather.utils.Constants;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

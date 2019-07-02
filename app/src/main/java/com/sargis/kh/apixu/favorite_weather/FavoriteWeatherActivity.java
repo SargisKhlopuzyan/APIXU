@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,9 +15,9 @@ import android.widget.SearchView;
 
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.databinding.ActivityFavoriteWeatherBinding;
-import com.sargis.kh.apixu.enums.DeleteModeSelectedState;
-import com.sargis.kh.apixu.enums.SearchStateMode;
-import com.sargis.kh.apixu.enums.StateMode;
+import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
+import com.sargis.kh.apixu.favorite_weather.enums.SearchStateMode;
+import com.sargis.kh.apixu.favorite_weather.enums.StateMode;
 import com.sargis.kh.apixu.favorite_weather.adapters.FavoriteWeatherAdapter;
 import com.sargis.kh.apixu.favorite_weather.adapters.SearchAdapter;
 import com.sargis.kh.apixu.favorite_weather.adapters.SimpleItemTouchHelperCallback;
@@ -32,10 +31,10 @@ import com.sargis.kh.apixu.favorite_weather.presenters.EditModePresenter;
 import com.sargis.kh.apixu.favorite_weather.presenters.FavoriteWeatherDatabasePresenter;
 import com.sargis.kh.apixu.favorite_weather.presenters.FavoriteWeatherPresenter;
 import com.sargis.kh.apixu.favorite_weather.presenters.SearchPresenter;
-import com.sargis.kh.apixu.helpers.EnumHelper;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
-import com.sargis.kh.apixu.models.search.SearchDataModel;
-import com.sargis.kh.apixu.utils.Constants;
+import com.sargis.kh.apixu.favorite_weather.helpers.EnumHelper;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
+import com.sargis.kh.apixu.favorite_weather.utils.Constants;
 
 import java.util.List;
 

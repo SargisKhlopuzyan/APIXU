@@ -7,9 +7,9 @@ import com.sargis.kh.apixu.favorite_weather.contracts.FavoriteWeatherDatabaseCon
 import com.sargis.kh.apixu.favorite_weather.database.FavoriteWeatherDatabase;
 import com.sargis.kh.apixu.favorite_weather.database.dao.ItemDAO;
 import com.sargis.kh.apixu.favorite_weather.database.models.Item;
-import com.sargis.kh.apixu.helpers.DataConverter;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
-import com.sargis.kh.apixu.models.search.SearchDataModel;
+import com.sargis.kh.apixu.favorite_weather.helpers.DataConverter;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
 import com.sargis.kh.apixu.network.calls.Data;
 import com.sargis.kh.apixu.network.calls.GetDataCallback;
 

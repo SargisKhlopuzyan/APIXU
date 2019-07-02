@@ -1,4 +1,4 @@
-package com.sargis.kh.apixu.enums;
+package com.sargis.kh.apixu.favorite_weather.enums;
 
 public enum DeleteModeSelectedState {
 

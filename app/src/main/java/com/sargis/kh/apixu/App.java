@@ -14,15 +14,15 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (context == null)
+        if (context == null) {
             context = getApplicationContext();
+        }
 
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttp3Downloader(this, Integer.MAX_VALUE));
         Picasso built = builder.build();
         Picasso.setSingletonInstance(built);
 
-        // Make sure we use vector drawables
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 

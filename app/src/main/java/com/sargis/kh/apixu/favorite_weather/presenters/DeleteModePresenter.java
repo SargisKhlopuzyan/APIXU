@@ -1,15 +1,14 @@
 package com.sargis.kh.apixu.favorite_weather.presenters;
 
 import android.arch.persistence.room.Room;
-import android.util.Log;
 
 import com.sargis.kh.apixu.App;
-import com.sargis.kh.apixu.enums.DeleteModeSelectedState;
+import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
 import com.sargis.kh.apixu.favorite_weather.contracts.DeleteModeContract;
 import com.sargis.kh.apixu.favorite_weather.database.FavoriteWeatherDatabase;
 import com.sargis.kh.apixu.favorite_weather.database.dao.ItemDAO;
-import com.sargis.kh.apixu.helpers.DataConverter;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.helpers.DataConverter;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
 
 import java.util.ArrayList;
 import java.util.List;

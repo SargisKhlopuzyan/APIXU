@@ -6,11 +6,11 @@
 
     <data>
 
-        <import type="com.sargis.kh.apixu.enums.StateMode" />
+        <import type="com.sargis.kh.apixu.favorite_weather.enums.StateMode" />
 
-        <import type="com.sargis.kh.apixu.enums.SearchStateMode" />
+        <import type="com.sargis.kh.apixu.favorite_weather.enums.SearchStateMode" />
 
-        <import type="com.sargis.kh.apixu.enums.DeleteModeSelectedState" />
+        <import type="com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState" />
 
         <import type="android.view.View" />
 
@@ -20,11 +20,11 @@
 
         <variable
             name="stateMode"
-            type="com.sargis.kh.apixu.enums.StateMode" />
+            type="com.sargis.kh.apixu.favorite_weather.enums.StateMode" />
 
         <variable
             name="searchStateMode"
-            type="com.sargis.kh.apixu.enums.SearchStateMode" />
+            type="com.sargis.kh.apixu.favorite_weather.enums.SearchStateMode" />
 
         <variable
             name="deleteModeSelectedState"

@@ -1,4 +1,4 @@
-package com.sargis.kh.apixu.models.search;
+package com.sargis.kh.apixu.favorite_weather.models.search;
 
 import com.google.gson.annotations.SerializedName;
 

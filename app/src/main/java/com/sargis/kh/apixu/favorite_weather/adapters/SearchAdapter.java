@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.databinding.LayoutRecyclerViewItemSearchBinding;
-import com.sargis.kh.apixu.enums.SearchStateMode;
-import com.sargis.kh.apixu.models.search.SearchDataModel;
+import com.sargis.kh.apixu.favorite_weather.enums.SearchStateMode;
+import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
 
 import java.util.ArrayList;
 import java.util.List;

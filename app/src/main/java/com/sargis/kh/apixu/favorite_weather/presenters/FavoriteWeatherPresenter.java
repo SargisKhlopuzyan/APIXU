@@ -1,13 +1,11 @@
 package com.sargis.kh.apixu.favorite_weather.presenters;
 
-import android.util.Log;
-
 import com.sargis.kh.apixu.App;
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.favorite_weather.contracts.FavoriteWeatherContract;
 import com.sargis.kh.apixu.helpers.NetworkHelper;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
-import com.sargis.kh.apixu.models.search.SearchDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
 import com.sargis.kh.apixu.network.calls.Data;
 import com.sargis.kh.apixu.network.calls.GetDataCallback;
 

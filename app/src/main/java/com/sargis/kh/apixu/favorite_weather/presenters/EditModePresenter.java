@@ -6,8 +6,8 @@ import com.sargis.kh.apixu.App;
 import com.sargis.kh.apixu.favorite_weather.contracts.EditModeContract;
 import com.sargis.kh.apixu.favorite_weather.database.FavoriteWeatherDatabase;
 import com.sargis.kh.apixu.favorite_weather.database.dao.ItemDAO;
-import com.sargis.kh.apixu.helpers.DataConverter;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.helpers.DataConverter;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
 
 import java.util.List;
 

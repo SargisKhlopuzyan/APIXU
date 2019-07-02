@@ -1,8 +1,8 @@
-package com.sargis.kh.apixu.helpers;
+package com.sargis.kh.apixu.favorite_weather.helpers;
 
-import com.sargis.kh.apixu.enums.DeleteModeSelectedState;
-import com.sargis.kh.apixu.enums.SearchStateMode;
-import com.sargis.kh.apixu.enums.StateMode;
+import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
+import com.sargis.kh.apixu.favorite_weather.enums.SearchStateMode;
+import com.sargis.kh.apixu.favorite_weather.enums.StateMode;
 
 
 public class EnumHelper {

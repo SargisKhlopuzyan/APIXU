@@ -1,7 +1,7 @@
 package com.sargis.kh.apixu.favorite_weather.contracts;
 
-import com.sargis.kh.apixu.enums.DeleteModeSelectedState;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
 
 import java.util.ArrayList;
 import java.util.List;

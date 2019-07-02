@@ -1,6 +1,6 @@
 package com.sargis.kh.apixu.helpers;
 
-import com.sargis.kh.apixu.utils.Constants;
+import com.sargis.kh.apixu.favorite_weather.utils.Constants;
 
 public class UrlHelper {
 

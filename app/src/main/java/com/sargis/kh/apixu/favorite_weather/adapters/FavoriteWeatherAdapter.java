@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.databinding.LayoutRecyclerViewItemFavoriteBinding;
-import com.sargis.kh.apixu.enums.StateMode;
-import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.enums.StateMode;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

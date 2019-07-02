@@ -1,4 +1,4 @@
-package com.sargis.kh.apixu.utils;
+package com.sargis.kh.apixu.favorite_weather.utils;
 
 public interface Constants {
 
