@@ -1,14 +1,14 @@
 package com.sargis.kh.apixu.enums;
 
-public enum StateMode {
+public enum DeleteModeSelectedState {
 
-    Normal(0),
-    Edit(1),
-    Delete(2);
+    Unselected(0),
+    Selected(1),
+    AllSelected(2);
 
     private int index;
 
-    StateMode(int index) {
+    DeleteModeSelectedState(int index) {
         this.index = index;
     }
 

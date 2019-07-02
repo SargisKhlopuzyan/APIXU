@@ -4,9 +4,8 @@ public interface Constants {
 
     interface UrlConstants {
         String BASE_URL = "https://api.apixu.com/v1/";
-
-        String SEARCH_URL = "https://api.apixu.com/v1/search.json?key=" + ApiConstants.API_KEY + "&q=";
-        String CURRENT_WEATHER_URL = "https://api.apixu.com/v1/current.json?key=" + ApiConstants.API_KEY + "&q=";
+        String SEARCH_URL = BASE_URL + "search.json?key=" + ApiConstants.API_KEY + "&q=";
+        String CURRENT_WEATHER_URL = BASE_URL + "current.json?key=" + ApiConstants.API_KEY + "&q=";
     }
 
     interface ApiConstants {
@@ -15,13 +14,17 @@ public interface Constants {
 
     interface BundleConstants {
         String STATE_MODE = "STATE_MODE";
-        String SELECTED_STATE = "SELECTED_STATE";
-        String SELECTED_ITEMS_COUNT = "SELECTED_ITEMS_COUNT";
+        String DELETE_MODE_SELECTED_STATE = "DELETE_MODE_SELECTED_STATE";
+        String SELECTED_ITEMS_ORDER_INDEXES = "SELECTED_ITEMS_ORDER_INDEXES";
 
         String IS_ERROR_VISIBLE = "IS_ERROR_VISIBLE";
         String ERROR_MESSAGE = "ERROR_MESSAGE";
-        String IS_SEARCH_MODE_LOADING = "IS_SEARCH_MODE_LOADING";
-        String IS_FAVORITE_LOADING = "IS_FAVORITE_LOADING";
+
+        String QUERY_SEARCH = "QUERY_SEARCH";
+        String SEARCH_DATA_MODEL = "SEARCH_DATA_MODEL";
+
+        String SEARCH_STATE_MODE = "SEARCH_STATE_MODE";
+        String IS_FAVORITE_WEATHER_LOADING = "IS_FAVORITE_WEATHER_LOADING";
     }
 
 }

@@ -1,4 +1,4 @@
-package com.sargis.kh.apixu.adapters;
+package com.sargis.kh.apixu.favorite_weather.adapters;
 
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
@@ -19,8 +19,8 @@ import java.util.List;
 public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeatherAdapter.ItemViewHolder> implements ItemTouchHelperAdapter {
 
     public interface ItemInteractionInterface {
-        void onFavoriteItemRemoved(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedDataModel, int position);
-        void onFavoriteItemMoved(int fromPosition, int toPosition);
+        void onFavoriteWeatherItemDismiss(List<CurrentWeatherDataModel> currentWeatherDataModels, CurrentWeatherDataModel deletedDataModel, int position);
+        void onFavoriteWeatherItemMoved(int fromPosition, int toPosition);
         void onFavoriteItemSelectedStateChanged(CurrentWeatherDataModel currentWeatherDataModel, int itemsSize, int position, Boolean isSelected);
     }
 
@@ -91,7 +91,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
         }
     }
 
-    public List<CurrentWeatherDataModel> getCurrentWeatherDataModels() {
+    public List<CurrentWeatherDataModel> getFavoriteWeatherDataModels() {
         return favoriteDataModels;
     }
 
@@ -130,7 +130,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
 
     @Override
     public void onItemDismiss(int position) {
-        itemInteractionInterface.onFavoriteItemRemoved(favoriteDataModels, favoriteDataModels.get(position), position);
+        itemInteractionInterface.onFavoriteWeatherItemDismiss(favoriteDataModels, favoriteDataModels.get(position), position);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
         }
         swapItemsOrderIndexes(fromPosition, toPosition);
 
-        itemInteractionInterface.onFavoriteItemMoved(fromPosition, toPosition);
+        itemInteractionInterface.onFavoriteWeatherItemMoved(fromPosition, toPosition);
 
         notifyItemMoved(fromPosition, toPosition);
 
@@ -154,7 +154,7 @@ public class FavoriteWeatherAdapter extends RecyclerView.Adapter<FavoriteWeather
     }
 
     private void swapItemsOrderIndexes(int fromPosition, int toPosition) {
-        Long tempFromPosition = favoriteDataModels.get(fromPosition).orderIndex;
+        Integer tempFromPosition = favoriteDataModels.get(fromPosition).orderIndex;
         favoriteDataModels.get(fromPosition).orderIndex = favoriteDataModels.get(toPosition).orderIndex;
         favoriteDataModels.get(toPosition).orderIndex = tempFromPosition;
     }

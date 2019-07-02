@@ -1,6 +1,7 @@
 package com.sargis.kh.apixu.helpers;
 
-import com.sargis.kh.apixu.enums.SelectedState;
+import com.sargis.kh.apixu.enums.DeleteModeSelectedState;
+import com.sargis.kh.apixu.enums.SearchStateMode;
 import com.sargis.kh.apixu.enums.StateMode;
 
 
@@ -15,13 +16,21 @@ public class EnumHelper {
         return null;
     }
 
-    public static SelectedState getSelectedState(int index) {
+    public static DeleteModeSelectedState getSelectedState(int index) {
 
-        for (SelectedState selectedState: SelectedState.values()) {
-            if (index == selectedState.getIndex())
-                return selectedState;
+        for (DeleteModeSelectedState deleteModeSelectedState : DeleteModeSelectedState.values()) {
+            if (index == deleteModeSelectedState.getIndex())
+                return deleteModeSelectedState;
         }
         return null;
     }
 
+    public static SearchStateMode getSearchStateMode(int index) {
+
+        for (SearchStateMode searchStateMode : SearchStateMode.values()) {
+            if (index == searchStateMode.getIndex())
+                return searchStateMode;
+        }
+        return null;
+    }
 }

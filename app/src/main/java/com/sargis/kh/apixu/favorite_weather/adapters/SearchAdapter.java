@@ -1,4 +1,4 @@
-package com.sargis.kh.apixu.adapters;
+package com.sargis.kh.apixu.favorite_weather.adapters;
 
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
@@ -8,12 +8,17 @@ import android.view.ViewGroup;
 
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.databinding.LayoutRecyclerViewItemSearchBinding;
+import com.sargis.kh.apixu.enums.SearchStateMode;
 import com.sargis.kh.apixu.models.search.SearchDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemViewHolder> {
+
+    public void setSearchStateMode(SearchStateMode searchStateMode) {
+
+    }
 
     public interface SearchItemSelectedInterface {
         void onSearchItemClicked(SearchDataModel searchDataModel);
@@ -48,12 +53,16 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ItemViewHo
         return searchDataModels.size();
     }
 
-    public void updateData(List<SearchDataModel> searchDataModels) {
-        if (searchDataModels == null)
-            this.searchDataModels.clear();
-        else
-            this.searchDataModels = searchDataModels;
+    public List<SearchDataModel> getSearchDataModels() {
+        return searchDataModels;
+    }
 
+    public void updateData(List<SearchDataModel> searchDataModels) {
+        this.searchDataModels.clear();
+        if (searchDataModels != null) {
+//            this.searchDataModels.addAll(searchDataModels);
+            this.searchDataModels = searchDataModels;
+        }
         notifyDataSetChanged();
     }
 

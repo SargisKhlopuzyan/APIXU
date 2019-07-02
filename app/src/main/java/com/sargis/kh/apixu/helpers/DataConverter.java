@@ -1,6 +1,6 @@
 package com.sargis.kh.apixu.helpers;
 
-import com.sargis.kh.apixu.database.models.Item;
+import com.sargis.kh.apixu.favorite_weather.database.models.Item;
 import com.sargis.kh.apixu.models.favorite.Condition;
 import com.sargis.kh.apixu.models.favorite.Current;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;

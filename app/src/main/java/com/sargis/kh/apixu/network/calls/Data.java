@@ -3,11 +3,11 @@ package com.sargis.kh.apixu.network.calls;
 import com.sargis.kh.apixu.models.favorite.CurrentWeatherDataModel;
 import com.sargis.kh.apixu.models.search.SearchDataModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Data {
 
-    public static void getSearchData(GetDataCallback<ArrayList<SearchDataModel>> dataCallback, String query) {
+    public static void getSearchData(GetDataCallback<List<SearchDataModel>> dataCallback, String query) {
         AsynchronousRequests.getSearchData(dataCallback, query);
     }
 

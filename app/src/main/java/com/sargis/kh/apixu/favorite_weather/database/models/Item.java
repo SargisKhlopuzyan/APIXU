@@ -1,4 +1,4 @@
-package com.sargis.kh.apixu.database.models;
+package com.sargis.kh.apixu.favorite_weather.database.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
@@ -11,7 +11,7 @@ public class Item {
     @NonNull
     private Long id;
 
-    private Long order_index;
+    private Integer order_index;
 
     private String name;
 
@@ -34,7 +34,7 @@ public class Item {
         return id;
     }
 
-    public Long getOrder_index() {
+    public Integer getOrder_index() {
         return order_index;
     }
 
@@ -74,7 +74,7 @@ public class Item {
         this.id = id;
     }
 
-    public void setOrder_index(Long order_index) {
+    public void setOrder_index(Integer order_index) {
         this.order_index = order_index;
     }
 

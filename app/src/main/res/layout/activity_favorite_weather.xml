@@ -8,7 +8,9 @@
 
         <import type="com.sargis.kh.apixu.enums.StateMode" />
 
-        <import type="com.sargis.kh.apixu.enums.SelectedState" />
+        <import type="com.sargis.kh.apixu.enums.SearchStateMode" />
+
+        <import type="com.sargis.kh.apixu.enums.DeleteModeSelectedState" />
 
         <import type="android.view.View" />
 
@@ -21,8 +23,12 @@
             type="com.sargis.kh.apixu.enums.StateMode" />
 
         <variable
-            name="selectedState"
-            type="SelectedState" />
+            name="searchStateMode"
+            type="com.sargis.kh.apixu.enums.SearchStateMode" />
+
+        <variable
+            name="deleteModeSelectedState"
+            type="DeleteModeSelectedState" />
 
         <variable
             name="selectedItemsCount"
@@ -37,11 +43,7 @@
             type="String" />
 
         <variable
-            name="isSearchLoading"
-            type="boolean" />
-
-        <variable
-            name="isFavoriteLoading"
+            name="isFavoriteWeatherLoading"
             type="boolean" />
 
         <variable
@@ -107,7 +109,7 @@
                         android:imeOptions="flagNoFullscreen|flagNoExtractUi"
                         android:queryHint="@string/query_hint"
                         android:iconifiedByDefault="true"
-                        android:visibility="@{stateMode == StateMode.Normal || stateMode == StateMode.Empty || stateMode == StateMode.Search ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{stateMode == StateMode.Normal ? View.VISIBLE : View.GONE}"
                         bind:setOnQueryTextFocusChangeListener="@{onQueryTextFocusChangeListener}"
                         bind:setOnQueryTextListener="@{onQueryTextListener}"
                         tools:visibility="gone"/>
@@ -232,7 +234,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="8dp"
-                android:visibility="@{!isSearchLoading &amp;&amp; !isFavoriteLoading &amp;&amp; isErrorVisible ? View.VISIBLE : View.GONE}"
+                android:visibility="@{searchStateMode != SearchStateMode.Loading &amp;&amp; !isFavoriteWeatherLoading &amp;&amp; isErrorVisible ? View.VISIBLE : View.GONE}"
                 android:text="@{errorMessage}"
                 android:gravity="center"
                 app:layout_constraintTop_toTopOf="parent"
@@ -244,7 +246,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginVertical="8dp"
-                android:visibility="@{isSearchLoading || isFavoriteLoading ? View.VISIBLE : View.GONE}"
+                android:visibility="@{searchStateMode == SearchStateMode.Loading || isFavoriteWeatherLoading ? View.VISIBLE : View.GONE}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -263,7 +265,7 @@
             app:onRefreshListener="@{() -> onRefreshListener.onRefresh()}">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerViewFavorite"
+                android:id="@+id/recyclerViewFavoriteWeather"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
@@ -306,7 +308,7 @@
                     android:textSize="8sp"
                     android:textAllCaps="false"
                     android:onClick="@{(v) -> onDeleteClickListener.onClick(v)}"
-                    android:enabled="@{selectedState != SelectedState.Unselected}"
+                    android:enabled="@{deleteModeSelectedState != DeleteModeSelectedState.Unselected}"
                     android:drawableTop="@drawable/selector_trash"
                     android:background="@android:color/transparent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -321,12 +323,12 @@
                     android:minHeight="0dp"
                     android:minWidth="60dp"
                     android:state_selected="true"
-                    android:text="@{selectedState == SelectedState.AllSelected ? @string/deselect_all : @string/select_all}"
+                    android:text="@{deleteModeSelectedState == DeleteModeSelectedState.AllSelected ? @string/deselect_all : @string/select_all}"
                     tools:text="@string/select_all"
                     android:textSize="8sp"
                     android:textAllCaps="false"
                     android:onClick="@{(v) -> onSelectAllClickListener.onClick(v)}"
-                    android:drawableTop="@{selectedState == SelectedState.AllSelected ? @drawable/selector_check_all_selected : @drawable/selector_check}"
+                    android:drawableTop="@{deleteModeSelectedState == DeleteModeSelectedState.AllSelected ? @drawable/selector_check_all_selected : @drawable/selector_check}"
                     tools:drawableTop="@drawable/selector_check"
                     android:background="@android:color/transparent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -347,8 +349,8 @@
             android:paddingHorizontal="24dp"
             android:clipToPadding="false"
             android:scrollbars="none"
-            android:background="@{stateMode == StateMode.Empty ? @color/transparentWhite : @android:color/white}"
-            android:visibility="@{stateMode == StateMode.Search || stateMode == StateMode.Empty ? View.VISIBLE : View.GONE}"
+            android:background="@{searchStateMode == SearchStateMode.Empty ? @color/transparentWhite : @android:color/white}"
+            android:visibility="@{searchStateMode == SearchStateMode.Non ? View.GONE : View.VISIBLE}"
             app:layout_constraintVertical_bias="0.0"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"

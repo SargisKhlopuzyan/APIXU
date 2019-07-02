@@ -8,7 +8,7 @@ public class CurrentWeatherDataModel implements Serializable {
 
     public Long id;
 
-    public Long orderIndex;
+    public Integer orderIndex;
 
     public boolean isSelected;
 

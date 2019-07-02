@@ -1,4 +1,4 @@
-package com.sargis.kh.apixu.adapters;
+package com.sargis.kh.apixu.favorite_weather.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;

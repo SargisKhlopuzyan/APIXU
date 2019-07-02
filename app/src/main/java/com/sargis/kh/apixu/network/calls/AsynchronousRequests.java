@@ -6,19 +6,19 @@ import com.sargis.kh.apixu.models.search.SearchDataModel;
 import com.sargis.kh.apixu.network.APIService;
 import com.sargis.kh.apixu.network.RetrofitClientInstance;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class AsynchronousRequests {
 
-    public static void getSearchData(GetDataCallback<ArrayList<SearchDataModel>> dataCallback, String query) {
+    public static void getSearchData(GetDataCallback<List<SearchDataModel>> dataCallback, String query) {
         APIService service = RetrofitClientInstance.getRetrofitInstance().create(APIService.class);
-        Call<ArrayList<SearchDataModel>> call = service.getSearchData(UrlHelper.getDataBySearchQuery(query));
-        call.enqueue(new Callback<ArrayList<SearchDataModel>>() {
+        Call<List<SearchDataModel>> call = service.getSearchData(UrlHelper.getDataBySearchQuery(query));
+        call.enqueue(new Callback<List<SearchDataModel>>() {
             @Override
-            public void onResponse(Call<ArrayList<SearchDataModel>> call, retrofit2.Response<ArrayList<SearchDataModel>> dataResponse) {
+            public void onResponse(Call<List<SearchDataModel>> call, retrofit2.Response<List<SearchDataModel>> dataResponse) {
                 if (dataResponse.isSuccessful()) {
                     dataCallback.onSuccess(dataResponse.body());
                 } else {
@@ -27,12 +27,11 @@ public class AsynchronousRequests {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<SearchDataModel>> call, Throwable t) {
+            public void onFailure(Call<List<SearchDataModel>> call, Throwable t) {
                 dataCallback.onFailure(t);
             }
         });
     }
-
 
     public static void getCurrentWeatherData(GetDataCallback<CurrentWeatherDataModel> dataCallback, String query) {
         APIService service = RetrofitClientInstance.getRetrofitInstance().create(APIService.class);
@@ -53,6 +52,5 @@ public class AsynchronousRequests {
             }
         });
     }
-
 
 }

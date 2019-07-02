@@ -1,11 +1,12 @@
-package com.sargis.kh.apixu.database.dao;
+package com.sargis.kh.apixu.favorite_weather.database.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.util.Log;
 
-import com.sargis.kh.apixu.database.models.Item;
+import com.sargis.kh.apixu.favorite_weather.database.models.Item;
 
 import java.util.List;
 
