@@ -1,11 +1,9 @@
 package com.sargis.kh.apixu.favorite_weather.presenters;
 
-import android.arch.persistence.room.Room;
+import android.util.Log;
 
-import com.sargis.kh.apixu.App;
 import com.sargis.kh.apixu.favorite_weather.contracts.FavoriteWeatherDatabaseContract;
-import com.sargis.kh.apixu.favorite_weather.database.FavoriteWeatherDatabase;
-import com.sargis.kh.apixu.favorite_weather.database.dao.ItemDAO;
+import com.sargis.kh.apixu.favorite_weather.data.DataManager;
 import com.sargis.kh.apixu.favorite_weather.database.models.Item;
 import com.sargis.kh.apixu.favorite_weather.helpers.DataConverter;
 import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
@@ -15,33 +13,33 @@ import com.sargis.kh.apixu.network.calls.GetDataCallback;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import okhttp3.ResponseBody;
 
 public class FavoriteWeatherDatabasePresenter implements FavoriteWeatherDatabaseContract.Presenter {
 
     private FavoriteWeatherDatabaseContract.View viewCallback;
 
-    private FavoriteWeatherDatabase database;
+    @Inject
+    DataManager dataManager;
 
+    @Inject
     public FavoriteWeatherDatabasePresenter(FavoriteWeatherDatabaseContract.View viewCallback) {
         this.viewCallback = viewCallback;
-        database = Room.databaseBuilder(App.getAppContext(), FavoriteWeatherDatabase.class, "WeatherDatabaseDb")
-                .allowMainThreadQueries()
-                .build();
     }
 
     @Override
     public List<CurrentWeatherDataModel> getSavedFavoriteWeatherDataFromDatabase() {
-        ItemDAO itemDAO = database.getItemDAO();
-        List<Item> items = itemDAO.getItems();
+        Log.e("LOG_TAG", "getSavedFavoriteWeatherDataFromDatabase() : dataManager : " + dataManager);
+        List<Item> items = dataManager.getItems();
         return DataConverter.convertItemsToCurrentWeatherDataModels(items);
     }
 
     @Override
     public Long saveFavoriteDataInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
-        ItemDAO itemDAO = database.getItemDAO();
         Item item = DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModel);
-        return itemDAO.insert(item);
+        return dataManager.insert(item);
     }
 
     @Override
@@ -97,13 +95,12 @@ public class FavoriteWeatherDatabasePresenter implements FavoriteWeatherDatabase
     }
 
     private void updateFavoritesDataInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
-        ItemDAO itemDAO = database.getItemDAO();
-        Item oldItem = itemDAO.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country );
+        Item oldItem = dataManager.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country );
 
         currentWeatherDataModel.id = oldItem.getId();
         currentWeatherDataModel.orderIndex = oldItem.getOrder_index();
         Item item = DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModel);
-        itemDAO.update(item);
+        dataManager.update(item);
 
         viewCallback.onSavedFavoriteWeatherDataUpdated(currentWeatherDataModel);
     }
@@ -111,8 +108,7 @@ public class FavoriteWeatherDatabasePresenter implements FavoriteWeatherDatabase
     @Override
     public boolean isFavoriteWeatherDataExistInDatabase(SearchDataModel searchDataModel) {
         String name = searchDataModel.name.replace(", " + searchDataModel.region + ", " + searchDataModel.country, "");
-        ItemDAO itemDAO = database.getItemDAO();
-        Item item = itemDAO.getItemByFullName(name, searchDataModel.region, searchDataModel.country);
+        Item item = dataManager.getItemByFullName(name, searchDataModel.region, searchDataModel.country);
         if (item == null)
             return false;
         else
@@ -121,8 +117,7 @@ public class FavoriteWeatherDatabasePresenter implements FavoriteWeatherDatabase
 
     @Override
     public boolean isFavoriteWeatherDataExistInDatabase(CurrentWeatherDataModel currentWeatherDataModel) {
-        ItemDAO itemDAO = database.getItemDAO();
-        Item item = itemDAO.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country);
+        Item item = dataManager.getItemByFullName(currentWeatherDataModel.location.name, currentWeatherDataModel.location.region, currentWeatherDataModel.location.country);
         if (item == null)
             return false;
         else
@@ -132,7 +127,6 @@ public class FavoriteWeatherDatabasePresenter implements FavoriteWeatherDatabase
     @Override
     public CurrentWeatherDataModel getSavedFavoriteWeatherDataFromDatabase(SearchDataModel searchDataModel) {
         String name = searchDataModel.name.replace(", " + searchDataModel.region + ", " + searchDataModel.country, "");
-        ItemDAO itemDAO = database.getItemDAO();
-        return DataConverter.convertItemToCurrentWeatherDataModel(itemDAO.getItemByFullName(name, searchDataModel.region, searchDataModel.country));
+        return DataConverter.convertItemToCurrentWeatherDataModel(dataManager.getItemByFullName(name, searchDataModel.region, searchDataModel.country));
     }
 }

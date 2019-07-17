@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,9 +16,17 @@ import android.widget.SearchView;
 
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.databinding.ActivityFavoriteWeatherBinding;
-import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
-import com.sargis.kh.apixu.favorite_weather.enums.SearchStateMode;
-import com.sargis.kh.apixu.favorite_weather.enums.StateMode;
+import com.sargis.kh.apixu.di.component.DaggerDeleteModeComponent;
+import com.sargis.kh.apixu.di.component.DaggerEditModeComponent;
+import com.sargis.kh.apixu.di.component.DaggerFavoriteWeatherComponent;
+import com.sargis.kh.apixu.di.component.DaggerFavoriteWeatherDatabaseComponent;
+import com.sargis.kh.apixu.di.component.DaggerSearchComponent;
+import com.sargis.kh.apixu.di.component.DeleteModeComponent;
+import com.sargis.kh.apixu.di.module.DeleteModePresenterModule;
+import com.sargis.kh.apixu.di.module.EditModePresenterModule;
+import com.sargis.kh.apixu.di.module.FavoriteWeatherDatabasePresenterModule;
+import com.sargis.kh.apixu.di.module.FavoriteWeatherPresenterModule;
+import com.sargis.kh.apixu.di.module.SearchPresenterModule;
 import com.sargis.kh.apixu.favorite_weather.adapters.FavoriteWeatherAdapter;
 import com.sargis.kh.apixu.favorite_weather.adapters.SearchAdapter;
 import com.sargis.kh.apixu.favorite_weather.adapters.SimpleItemTouchHelperCallback;
@@ -26,17 +35,22 @@ import com.sargis.kh.apixu.favorite_weather.contracts.EditModeContract;
 import com.sargis.kh.apixu.favorite_weather.contracts.FavoriteWeatherContract;
 import com.sargis.kh.apixu.favorite_weather.contracts.FavoriteWeatherDatabaseContract;
 import com.sargis.kh.apixu.favorite_weather.contracts.SearchContract;
+import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
+import com.sargis.kh.apixu.favorite_weather.enums.SearchStateMode;
+import com.sargis.kh.apixu.favorite_weather.enums.StateMode;
+import com.sargis.kh.apixu.favorite_weather.helpers.EnumHelper;
+import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
+import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
 import com.sargis.kh.apixu.favorite_weather.presenters.DeleteModePresenter;
 import com.sargis.kh.apixu.favorite_weather.presenters.EditModePresenter;
 import com.sargis.kh.apixu.favorite_weather.presenters.FavoriteWeatherDatabasePresenter;
 import com.sargis.kh.apixu.favorite_weather.presenters.FavoriteWeatherPresenter;
 import com.sargis.kh.apixu.favorite_weather.presenters.SearchPresenter;
-import com.sargis.kh.apixu.favorite_weather.helpers.EnumHelper;
-import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
-import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
 import com.sargis.kh.apixu.favorite_weather.utils.Constants;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class FavoriteWeatherActivity extends AppCompatActivity implements SearchAdapter.SearchItemSelectedInterface,
         FavoriteWeatherContract.View,
@@ -46,16 +60,28 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
         DeleteModeContract.View,
         FavoriteWeatherAdapter.ItemInteractionInterface {
 
+
+    @Inject
+    protected FavoriteWeatherPresenter favoriteWeatherPresenter;
+
+    @Inject
+    protected FavoriteWeatherDatabasePresenter favoriteWeatherDatabasePresenter;
+
+    @Inject
+    protected SearchPresenter searchPresenter;
+
+    @Inject
+    protected EditModePresenter editModePresenter;
+
+    @Inject
+    protected DeleteModePresenter deleteModePresenter;
+
+
+
     private ActivityFavoriteWeatherBinding binding;
 
     private SearchAdapter searchAdapter;
     private FavoriteWeatherAdapter favoriteWeatherAdapter;
-
-    private FavoriteWeatherContract.Presenter favoriteWeatherPresenter;
-    private FavoriteWeatherDatabaseContract.Presenter favoriteWeatherDatabasePresenter;
-    private SearchContract.Presenter searchPresenter;
-    private EditModeContract.Presenter editModePresenter;
-    private DeleteModeContract.Presenter deleteModePresenter;
 
     private ItemTouchHelper touchHelper;
 
@@ -66,15 +92,49 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
 
         setSupportActionBar(binding.toolbar);
 
-        favoriteWeatherPresenter = new FavoriteWeatherPresenter(this);
-        favoriteWeatherDatabasePresenter = new FavoriteWeatherDatabasePresenter(this);
-        searchPresenter = new SearchPresenter(this);
-        editModePresenter = new EditModePresenter(this);
-        deleteModePresenter = new DeleteModePresenter(this);
+        // Creates presenter
+        DeleteModeComponent deleteModeComponent = DaggerDeleteModeComponent.builder()
+                .deleteModePresenterModule(new DeleteModePresenterModule(this))
+                .build();
+
+        deleteModeComponent.inject(this);
+
+        Log.e("LOG_TAG", "deleteModeComponent: " + deleteModeComponent);
+
+        DaggerEditModeComponent.builder()
+                .editModePresenterModule(new EditModePresenterModule(this))
+                .build()
+                .inject(this);
+
+        DaggerFavoriteWeatherDatabaseComponent.builder()
+                .favoriteWeatherDatabasePresenterModule(new FavoriteWeatherDatabasePresenterModule(this))
+                .build()
+                .inject(this);
+
+        DaggerFavoriteWeatherComponent.builder()
+                .favoriteWeatherPresenterModule(new FavoriteWeatherPresenterModule(this))
+                .build()
+                .inject(this);
+
+        DaggerSearchComponent.builder()
+                .searchPresenterModule(new SearchPresenterModule(this))
+                .build()
+                .inject(this);
+
+        Log.e("LOG_TAG", "favoriteWeatherPresenter: " + favoriteWeatherPresenter);
+        Log.e("LOG_TAG", "favoriteWeatherDatabasePresenter: " + favoriteWeatherDatabasePresenter);
+        Log.e("LOG_TAG", "searchPresenter: " + searchPresenter);
+        Log.e("LOG_TAG", "editModePresenter: " + editModePresenter);
+        Log.e("LOG_TAG", "deleteModePresenter: " + deleteModePresenter);
+
+//        favoriteWeatherPresenter = new FavoriteWeatherPresenter(this);
+//        favoriteWeatherDatabasePresenter = new FavoriteWeatherDatabasePresenter(this);
+//        searchPresenter = new SearchPresenter(this);
+//        editModePresenter = new EditModePresenter(this);
+//        deleteModePresenter = new DeleteModePresenter(this);
 
         setupRecyclerViewSearch();
         setupRecyclerViewFavoriteWeather();
-
 
         if (savedInstanceState == null) {
             setStateMode(StateMode.Normal);
@@ -83,7 +143,6 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
             setSelectedItemsCount(DeleteModeSelectedState.Unselected, 0);
             setupSavedFavoriteWeatherDataFromDatabase();
         } else {
-
             List<CurrentWeatherDataModel> savedCurrentWeatherDataModels = favoriteWeatherDatabasePresenter.getSavedFavoriteWeatherDataFromDatabase();
 
             setStateMode(EnumHelper.getStateMode(savedInstanceState.getInt(Constants.BundleConstants.STATE_MODE)));

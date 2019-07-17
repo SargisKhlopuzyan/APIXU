@@ -2,24 +2,29 @@ package com.sargis.kh.apixu.favorite_weather.presenters;
 
 import android.os.CountDownTimer;
 
-import com.sargis.kh.apixu.App;
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.favorite_weather.contracts.SearchContract;
-import com.sargis.kh.apixu.helpers.NetworkHelper;
+import com.sargis.kh.apixu.favorite_weather.data.DataManager;
 import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
+import com.sargis.kh.apixu.helpers.NetworkHelper;
 import com.sargis.kh.apixu.network.calls.Data;
 import com.sargis.kh.apixu.network.calls.GetDataCallback;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import okhttp3.ResponseBody;
 
 public class SearchPresenter implements SearchContract.Presenter {
 
     private SearchContract.View viewCallback;
-
     private CountDownTimer countDownTimer;
 
+    @Inject
+    DataManager dataManager;
+
+    @Inject
     public SearchPresenter(SearchContract.View viewCallback) {
         this.viewCallback = viewCallback;
     }
@@ -39,8 +44,8 @@ public class SearchPresenter implements SearchContract.Presenter {
 
         viewCallback.onSearchDataLoadingStarted();
 
-        if (!NetworkHelper.isNetworkActive()) {
-            viewCallback.onSearchDataLoadedWithError(App.getAppContext().getString(R.string.no_internet_connection));
+        if (!NetworkHelper.isNetworkActive(dataManager.getContext())) {
+            viewCallback.onSearchDataLoadedWithError(dataManager.getString(R.string.no_internet_connection));
             destroyTimer();
             return;
         }

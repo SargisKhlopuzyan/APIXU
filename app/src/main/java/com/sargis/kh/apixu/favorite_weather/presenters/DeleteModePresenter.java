@@ -1,31 +1,28 @@
 package com.sargis.kh.apixu.favorite_weather.presenters;
 
-import android.arch.persistence.room.Room;
-
-import com.sargis.kh.apixu.App;
-import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
 import com.sargis.kh.apixu.favorite_weather.contracts.DeleteModeContract;
-import com.sargis.kh.apixu.favorite_weather.database.FavoriteWeatherDatabase;
-import com.sargis.kh.apixu.favorite_weather.database.dao.ItemDAO;
+import com.sargis.kh.apixu.favorite_weather.data.DataManager;
+import com.sargis.kh.apixu.favorite_weather.enums.DeleteModeSelectedState;
 import com.sargis.kh.apixu.favorite_weather.helpers.DataConverter;
 import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class DeleteModePresenter implements DeleteModeContract.Presenter {
 
     private DeleteModeContract.View viewCallback;
 
-    private FavoriteWeatherDatabase database;
-
     private ArrayList<Integer> selectedItemsOrderIndexes = new ArrayList<>();
 
+    @Inject
+    DataManager dataManager;
+
+    @Inject
     public DeleteModePresenter(DeleteModeContract.View viewCallback) {
         this.viewCallback = viewCallback;
-        database = Room.databaseBuilder(App.getAppContext(), FavoriteWeatherDatabase.class, "WeatherDatabaseDb")
-                .allowMainThreadQueries()
-                .build();
     }
 
     @Override
@@ -88,18 +85,16 @@ public class DeleteModePresenter implements DeleteModeContract.Presenter {
 
         selectedItemsOrderIndexes.clear();
 
-        ItemDAO itemDAO = database.getItemDAO();
-
         for (int i = currentWeatherDataModels.size() - 1; i >= 0 && i < currentWeatherDataModels.size(); i--) {
 
             if (currentWeatherDataModels.get(i).isSelected) {
 
-                itemDAO.delete(currentWeatherDataModels.get(i).id);
+                dataManager.delete(currentWeatherDataModels.get(i).id);
 
                 if (i > 0 && i < currentWeatherDataModels.size()) {
                     currentWeatherDataModels.get(i-1).orderIndex = currentWeatherDataModels.get(i).orderIndex;
                     if (!currentWeatherDataModels.get(i-1).isSelected) {
-                        itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i-1)));
+                        dataManager.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i-1)));
                     }
                 }
 
@@ -112,7 +107,7 @@ public class DeleteModePresenter implements DeleteModeContract.Presenter {
                 currentWeatherDataModels.get(i-1).orderIndex = currentWeatherDataModels.get(i).orderIndex + 1;
 
                 if (!currentWeatherDataModels.get(i-1).isSelected) {
-                    itemDAO.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i-1)));
+                    dataManager.update(DataConverter.convertCurrentWeatherDataModelToItem(currentWeatherDataModels.get(i-1)));
                 }
             }
         }

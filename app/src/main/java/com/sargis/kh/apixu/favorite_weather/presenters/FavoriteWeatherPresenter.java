@@ -1,13 +1,15 @@
 package com.sargis.kh.apixu.favorite_weather.presenters;
 
-import com.sargis.kh.apixu.App;
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.favorite_weather.contracts.FavoriteWeatherContract;
-import com.sargis.kh.apixu.helpers.NetworkHelper;
+import com.sargis.kh.apixu.favorite_weather.data.DataManager;
 import com.sargis.kh.apixu.favorite_weather.models.favorite.CurrentWeatherDataModel;
 import com.sargis.kh.apixu.favorite_weather.models.search.SearchDataModel;
+import com.sargis.kh.apixu.helpers.NetworkHelper;
 import com.sargis.kh.apixu.network.calls.Data;
 import com.sargis.kh.apixu.network.calls.GetDataCallback;
+
+import javax.inject.Inject;
 
 import okhttp3.ResponseBody;
 
@@ -15,8 +17,12 @@ public class FavoriteWeatherPresenter implements FavoriteWeatherContract.Present
 
     private FavoriteWeatherContract.View viewCallback;
 
+    @Inject
+    DataManager dataManager;
+
     private SearchDataModel searchDataModel;
 
+    @Inject
     public FavoriteWeatherPresenter(FavoriteWeatherContract.View viewCallback) {
         this.viewCallback = viewCallback;
     }
@@ -27,8 +33,8 @@ public class FavoriteWeatherPresenter implements FavoriteWeatherContract.Present
         this.searchDataModel = searchDataModel;
         viewCallback.onFavoriteWeatherDataLoadingStarted();
 
-        if (!NetworkHelper.isNetworkActive()) {
-            viewCallback.onFavoriteWeatherDataLoadedWithError(App.getAppContext().getString(R.string.no_internet_connection));
+        if (!NetworkHelper.isNetworkActive(dataManager.getContext())) {
+            viewCallback.onFavoriteWeatherDataLoadedWithError(dataManager.getString(R.string.no_internet_connection));
             return;
         }
 

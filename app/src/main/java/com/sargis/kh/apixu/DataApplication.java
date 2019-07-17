@@ -1,22 +1,28 @@
 package com.sargis.kh.apixu;
 
 import android.app.Application;
-import android.content.Context;
 import android.support.v7.app.AppCompatDelegate;
 
+import com.sargis.kh.apixu.di.component.ApplicationComponent;
+import com.sargis.kh.apixu.di.component.DaggerApplicationComponent;
+import com.sargis.kh.apixu.di.module.ApplicationModule;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
-public class App extends Application {
+public class DataApplication extends Application {
 
-    private static Context context;
+    protected ApplicationComponent applicationComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        if (context == null) {
-            context = getApplicationContext();
-        }
+
+        applicationComponent = DaggerApplicationComponent
+                .builder()
+                .applicationModule(new ApplicationModule(this))
+                .build();
+
+        applicationComponent.inject(this);
 
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.downloader(new OkHttp3Downloader(this, Integer.MAX_VALUE));
@@ -26,7 +32,4 @@ public class App extends Application {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
-    public static Context getAppContext() {
-        return context;
-    }
 }
