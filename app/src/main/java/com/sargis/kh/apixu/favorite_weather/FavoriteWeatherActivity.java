@@ -16,12 +16,8 @@ import android.widget.SearchView;
 
 import com.sargis.kh.apixu.R;
 import com.sargis.kh.apixu.databinding.ActivityFavoriteWeatherBinding;
-import com.sargis.kh.apixu.di.component.DaggerDeleteModeComponent;
-import com.sargis.kh.apixu.di.component.DaggerEditModeComponent;
-import com.sargis.kh.apixu.di.component.DaggerFavoriteWeatherComponent;
-import com.sargis.kh.apixu.di.component.DaggerFavoriteWeatherDatabaseComponent;
-import com.sargis.kh.apixu.di.component.DaggerSearchComponent;
-import com.sargis.kh.apixu.di.component.DeleteModeComponent;
+import com.sargis.kh.apixu.di.component.DaggerWeatherActivityComponent;
+import com.sargis.kh.apixu.di.module.ApplicationModule;
 import com.sargis.kh.apixu.di.module.DeleteModePresenterModule;
 import com.sargis.kh.apixu.di.module.EditModePresenterModule;
 import com.sargis.kh.apixu.di.module.FavoriteWeatherDatabasePresenterModule;
@@ -52,6 +48,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+
 public class FavoriteWeatherActivity extends AppCompatActivity implements SearchAdapter.SearchItemSelectedInterface,
         FavoriteWeatherContract.View,
         FavoriteWeatherDatabaseContract.View,
@@ -77,7 +74,6 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
     protected DeleteModePresenter deleteModePresenter;
 
 
-
     private ActivityFavoriteWeatherBinding binding;
 
     private SearchAdapter searchAdapter;
@@ -92,32 +88,13 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
 
         setSupportActionBar(binding.toolbar);
 
-        // Creates presenter
-        DeleteModeComponent deleteModeComponent = DaggerDeleteModeComponent.builder()
+        DaggerWeatherActivityComponent.builder()
+                .applicationModule(new ApplicationModule(this.getApplication()))
                 .deleteModePresenterModule(new DeleteModePresenterModule(this))
-                .build();
-
-        deleteModeComponent.inject(this);
-
-        Log.e("LOG_TAG", "deleteModeComponent: " + deleteModeComponent);
-
-        DaggerEditModeComponent.builder()
                 .editModePresenterModule(new EditModePresenterModule(this))
-                .build()
-                .inject(this);
-
-        DaggerFavoriteWeatherDatabaseComponent.builder()
-                .favoriteWeatherDatabasePresenterModule(new FavoriteWeatherDatabasePresenterModule(this))
-                .build()
-                .inject(this);
-
-        DaggerFavoriteWeatherComponent.builder()
-                .favoriteWeatherPresenterModule(new FavoriteWeatherPresenterModule(this))
-                .build()
-                .inject(this);
-
-        DaggerSearchComponent.builder()
                 .searchPresenterModule(new SearchPresenterModule(this))
+                .favoriteWeatherDatabasePresenterModule(new FavoriteWeatherDatabasePresenterModule(this))
+                .favoriteWeatherPresenterModule(new FavoriteWeatherPresenterModule(this))
                 .build()
                 .inject(this);
 
@@ -126,12 +103,6 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
         Log.e("LOG_TAG", "searchPresenter: " + searchPresenter);
         Log.e("LOG_TAG", "editModePresenter: " + editModePresenter);
         Log.e("LOG_TAG", "deleteModePresenter: " + deleteModePresenter);
-
-//        favoriteWeatherPresenter = new FavoriteWeatherPresenter(this);
-//        favoriteWeatherDatabasePresenter = new FavoriteWeatherDatabasePresenter(this);
-//        searchPresenter = new SearchPresenter(this);
-//        editModePresenter = new EditModePresenter(this);
-//        deleteModePresenter = new DeleteModePresenter(this);
 
         setupRecyclerViewSearch();
         setupRecyclerViewFavoriteWeather();
@@ -188,11 +159,11 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
 
     @SuppressLint("RestrictedApi")
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         int options = binding.searchView.getImeOptions();
-        binding.searchView.setImeOptions(options|EditorInfo.IME_FLAG_NO_EXTRACT_UI|EditorInfo.IME_FLAG_NO_FULLSCREEN);
+        binding.searchView.setImeOptions(options | EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
         return true;
     }
 
@@ -319,7 +290,7 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
         }
     }
 
-    private void setupSavedFavoriteWeatherDataFromDatabase(){
+    private void setupSavedFavoriteWeatherDataFromDatabase() {
         favoriteWeatherAdapter.setData(favoriteWeatherDatabasePresenter.getSavedFavoriteWeatherDataFromDatabase());
     }
 
@@ -347,8 +318,8 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
             invalidateOptionsMenu();
 
             if (hasFocus) {
-                setSearchStateMode(String.valueOf(((SearchView)v).getQuery()).isEmpty() ? SearchStateMode.Empty : SearchStateMode.Normal);
-            } else if (String.valueOf(((SearchView)v).getQuery()).isEmpty()){
+                setSearchStateMode(String.valueOf(((SearchView) v).getQuery()).isEmpty() ? SearchStateMode.Empty : SearchStateMode.Normal);
+            } else if (String.valueOf(((SearchView) v).getQuery()).isEmpty()) {
                 setSearchStateMode(SearchStateMode.Non);
                 binding.searchView.setIconified(true);
             } else {
@@ -476,7 +447,7 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
 
     /**
      * Search view callbacks - start
-    */
+     */
 
     @Override
     public void onSearchDataLoadingStarted() {
@@ -543,7 +514,6 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
     /**
      * Delete/Edit Mode callbacks - end
      */
-
 
 
     @Override
