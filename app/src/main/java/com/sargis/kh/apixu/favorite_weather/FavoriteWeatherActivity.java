@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,7 +56,6 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
         DeleteModeContract.View,
         FavoriteWeatherAdapter.ItemInteractionInterface {
 
-
     @Inject
     protected FavoriteWeatherPresenter favoriteWeatherPresenter;
 
@@ -97,12 +95,6 @@ public class FavoriteWeatherActivity extends AppCompatActivity implements Search
                 .favoriteWeatherPresenterModule(new FavoriteWeatherPresenterModule(this))
                 .build()
                 .inject(this);
-
-        Log.e("LOG_TAG", "favoriteWeatherPresenter: " + favoriteWeatherPresenter);
-        Log.e("LOG_TAG", "favoriteWeatherDatabasePresenter: " + favoriteWeatherDatabasePresenter);
-        Log.e("LOG_TAG", "searchPresenter: " + searchPresenter);
-        Log.e("LOG_TAG", "editModePresenter: " + editModePresenter);
-        Log.e("LOG_TAG", "deleteModePresenter: " + deleteModePresenter);
 
         setupRecyclerViewSearch();
         setupRecyclerViewFavoriteWeather();

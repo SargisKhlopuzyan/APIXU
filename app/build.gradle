@@ -55,6 +55,6 @@ dependencies {
     implementation 'com.google.dagger:dagger-android:2.23.2'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.23.2'
 
-    compileOnly 'javax.annotation:jsr250-api:1.0'
+//    compileOnly 'javax.annotation:jsr250-api:1.0'
 }
 
